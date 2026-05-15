@@ -1,6 +1,3 @@
-Claro, mano. Segue um estudo em **Markdown**, pronto para colocar no repositório:
-
-````md
 # Como Resolver Exercícios de Programação
 
 Resolver exercícios de programação não é só sair escrevendo código.
@@ -589,10 +586,4 @@ Entender -> Planejar -> Codar -> Testar -> Melhorar
 
 Esse processo serve para exercícios simples, projetos reais e problemas do dia a dia como desenvolvedor.
 
-````
-
-A estrutura já está no jeito pra salvar como:
-
-```txt
-estudos/javascript/documentos-de-estudo/secao-00-primeiros-passos-programacao/3 - Como resolver exercicios.md
 ````

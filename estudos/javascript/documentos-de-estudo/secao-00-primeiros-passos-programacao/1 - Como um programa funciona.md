@@ -171,7 +171,7 @@ Ele controla:
 - processos
 - dispositivos
 
-Sem SO seria um caos do caralho kkkkk cada programa teria que controlar hardware direto.
+Sem SO seria um caos, cada programa teria que controlar hardware direto.
 
 ---
 

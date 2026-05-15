@@ -92,32 +92,6 @@ Pipeline simplificado:
             isso impacta:
             - performance (menos memória usada)
             - vazamento de memória (quando são mantidas referências sem querer)
-
-    - Event Loop:
-        O JavaScript é single-threaded, ou seja, ele tem apenas uma linha de execução, 
-        mas ele pode lidar com operações assíncronas através do event loop.
-
-        Fluxo:
-            Call stack + Web APIs + Callback Queue + Event Loop
-
-        Exemplo:
-            console.log("Início");
-
-            setTimeout(() => {
-                console.log("Callback");
-            }, 0);
-
-            console.log("Fim");
-
-            Saída:
-            Início
-            Fim
-            Callback
-
-            Porque:
-            - setTimeout vai pra fila
-            - só executa quando stack estiver vazio
-
 # ____________________________________________________________________________________________________________
 
 # . 2 - Otimizações do motor
@@ -234,25 +208,189 @@ Pipeline simplificado:
 
     isso ajuda o motor a otimizar o acesso aos elementos do array.
 
-## 7 - Entenda o event loop para evitar bugs:
+## 7 - Entenda o event loop para evitar bugs
+    O JavaScript é **single-threaded**, ou seja, executa **uma coisa por vez** na thread principal.
+
+    Mas então como ele consegue lidar com coisas assíncronas?
+    Através do **Event Loop**.
+
+    ### Como funciona
+
+    Pensa em 4 partes:
+
+    **Call Stack (pilha de execução)**
+    É onde o JavaScript executa as funções.
+
+    ```js
+    console.log("oi");
+    ```
+
+    O `console.log` entra na stack, executa e sai.
+
+    ---
+
+    **Web APIs / Runtime**
+    São recursos do navegador (ou Node.js) que executam tarefas fora da stack.
+
+    Exemplo:
+
+    * `setTimeout`
+    * requisições HTTP
+    * eventos de clique
+
+    Quando fazemos:
+
+    ```js
+    setTimeout(() => {
+        console.log("callback");
+    }, 1000);
+    ```
+
+    O JS **não fica esperando 1 segundo parado**.
+
+    Ele entrega essa tarefa pro navegador.
+
+    ---
+
+    **Callback Queue (Macrotasks)**
+    Quando a tarefa termina, o callback vai pra fila de espera.
+
+    Exemplo:
+
+    ```js
+    setTimeout(() => {
+        console.log("timeout");
+    }, 0);
+    ```
+
+    Mesmo com `0`, ele não executa instantaneamente.
+
+    Ele só entra na fila.
+
+    ---
+
+    **Microtask Queue**
+    Fila com prioridade maior.
+
+    Vai pra cá:
+
+    * `Promise.then()`
+    * `catch()`
+    * `finally()`
+    * `queueMicrotask()`
+
+    ---
+
+    **Event Loop**
+    É o "fiscal".
+
+    Ele verifica:
+
+    > "a call stack tá vazia?"
+
+    Se sim:
+
+    1. executa **todas as microtasks**
+    2. depois executa **uma macrotask**
+
+    ---
+
+    ### Exemplo real
+
+    ```js
     setTimeout(() => {
         console.log("Callback");
     }, 0);
 
     console.log("Início");
-    console.log("Fim");
 
     Promise.resolve().then(() => {
         console.log("Promise");
     });
 
-    Saída:
+    console.log("Fim");
+    ```
+
+    Fluxo:
+
+    **1. stack**
+
+    ```js
+    console.log("Início");
+    ```
+
+    saida:
+
+    ```js
+    Início
+    ```
+
+    ---
+
+    **2. setTimeout**
+    Vai pro navegador.
+
+    ---
+
+    **3. Promise**
+    Vai pra microtask queue.
+
+    ---
+
+    **4.**
+
+    ```js
+    console.log("Fim");
+    ```
+
+    saida:
+
+    ```js
+    Fim
+    ```
+
+    ---
+
+    Agora a stack ficou vazia.
+
+    Event loop olha:
+
+    **tem microtask?**
+    sim
+
+    executa:
+
+    ```js
+    Promise
+    ```
+
+    depois:
+
+    **tem macrotask?**
+    sim
+
+    executa:
+
+    ```js
+    Callback
+    ```
+
+    ---
+
+    Saída final:
+
+    ```js
     Início
     Fim
     Promise
     Callback
+    ```
 
-    Isso acontece porque as Promises (microtasks) têm prioridade sobre os callbacks do setTimeout (macrotask), mesmo com delay 0.
+    Resumo brutal:
+
+    **stack > microtasks > macrotasks**
+
+    Esse detalhe é onde nasce MUITO bug de assincronidade 😈
 
 ## 8 - Evite recursão profunda sem controle:
     function fatorial(n) {
