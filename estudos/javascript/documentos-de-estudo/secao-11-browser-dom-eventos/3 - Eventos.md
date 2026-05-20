@@ -442,7 +442,7 @@ Vantagens:
 
 ---
 
-# 12 - Eventos e [Event Loop](../secao-11-browser-dom-eventos/1%20-%20Motor%20JavaScript.md#12%20-%20Event%20Loop) 
+# 12 - Eventos e [Event Loop](1%20-%20Motor%20JavaScript.md#7---entenda-o-event-loop-para-evitar-bugs) 
 
 Clique:
 ```js
