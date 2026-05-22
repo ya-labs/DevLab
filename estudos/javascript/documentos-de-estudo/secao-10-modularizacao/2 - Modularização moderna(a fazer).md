@@ -199,3 +199,81 @@ export function criarUsuario(req) {
 }
 ```
 
+## 2 - Service (regra de negócio)
+
+```js
+export function criar(dados) {
+    validar(dados);
+    return repository.salvar(dados);
+}
+```
+
+## 3 - Repository (dados)
+
+```js
+export function salvar(dados) {
+    // banco de dados
+}
+```
+
+Isso separa:
+- regra de negócio
+- infraestrutura
+- entrada
+
+## Dependência entre módulos
+
+Direção das dependências:
+```
+controller > service > repository
+```
+
+NUNCA:
+```
+repository chamando service
+```
+
+^^^ APROFUNDAR
+
+---
+
+# 6 - Modularização + escalabilidade
+
+Ao crescer, o projeto evolui para:
+> <span style="color:white;">Módulos independentes</span>
+```
+/modules
+    /auth
+    /biling
+    /orders
+```
+Cada módulo pode virar:
+- microserviço
+- lib separada
+
+# 7 - modularização + bundlers (webpack, vite)
+
+ESM entra aqui forte:
+- tree-shaking
+- code splitting
+- lazy loading
+
+^^^ APROFUNDAR
+
+---
+
+# 8 - Modularização + testes
+
+Módulos bem separados:
+- fácil de testar
+- fácil de mockar
+
+```js
+import * as repo from "./repo.js";
+jest.spyOn(repo, "salvar")
+```
+isso só funciona bem com baixo acoplamento.
+^^^ APROFUNDAR
+---
+
+# 9 - Erros comuns
