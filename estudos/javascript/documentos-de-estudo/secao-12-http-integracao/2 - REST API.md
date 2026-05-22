@@ -258,7 +258,7 @@ Body:
 ```json
 {
   "name": "Nícolas",
-  "email": "
+  "email": "nicolasmacardoso@gmail.com"
 }
 ```
 
