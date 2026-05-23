@@ -52,6 +52,8 @@ Isso facilita:
 - testes
 - reutilização
 
+---
+
 ## 2 - Baixo acoplamento
 
 módulos não devem depender fortemente uns dos outros
@@ -185,55 +187,25 @@ index.js é apenas um exemplo, o importante é ter um ponto de entrada claro par
 
 O nome index.js é uma convenção, vem da prática de criar um ponto de entrada padrão para módulos em JavaScript, "index" significa "índice" ou "entrada principal".
 
-# 5 - Camadas (layered architecture)
+> <span style="color:white;">Útil, mas usar com critério.</span>
 
-Muito comum em backend e apps grandes
+podem gerar:
+- imports desnecessários 
+- circular dependency
+- bundle maior dependendo do bundler 
 
-camadas principais:
+---
 
-## 1 - Controller
-> <span style="color:white;">Entrada da aplicação (HTTP, UI)</span>
-```js
-export function criarUsuario(req) {
-    return usuarioService.criarUsuario(req.body);
-}
-```
+# Tipos principais de arquitetura
 
-## 2 - Service (regra de negócio)
-
-```js
-export function criar(dados) {
-    validar(dados);
-    return repository.salvar(dados);
-}
-```
-
-## 3 - Repository (dados)
-
-```js
-export function salvar(dados) {
-    // banco de dados
-}
-```
-
-Isso separa:
-- regra de negócio
-- infraestrutura
-- entrada
-
-## Dependência entre módulos
-
-Direção das dependências:
-```
-controller > service > repository
-```
-
-NUNCA:
-```
-repository chamando service
-```
-
-^^^ APROFUNDAR
+- [Layered](#Layered)
+- [Clean architecture](#Clean%20architecture)
+- [Hexagonal](#Hexagonal)
+- [Vertical slice](#Vertical%20slice)
+- [Feature-first](#Feature%20first)
+- [Camadas (layered architecture)](#Camadas-layered%20architecture)
+- [Onion architecture](#Onion%20architecture)
+- [Microservices](#Microservices)
 
 ---
 
@@ -244,7 +216,7 @@ Ao crescer, o projeto evolui para:
 ```
 /modules
     /auth
-    /biling
+    /billing
     /orders
 ```
 Cada módulo pode virar:
@@ -274,6 +246,87 @@ jest.spyOn(repo, "salvar")
 ```
 isso só funciona bem com baixo acoplamento.
 ^^^ APROFUNDAR
+
 ---
 
 # 9 - Erros comuns
+
+## 1 - utils gigante
+
+```js
+utils.js com 500 funções:
+export function formatarData() {}
+export function calcularDesconto() {}
+export function validarEmail() {}
+...
+```
+
+Isso vira um monstro difícil de manter.
+O ideal é separar por domínio:
+```
+/format/formatarData.js
+/desconto/calcularDesconto.js
+/validacao/validarEmail.js
+```
+
+## 2 - Módulos sem responsabilidade clara
+```js
+helpers.js
+common.js
+```
+
+Nome genérico = código mal organizado
+O ideal para módulos é ter um propósito claro e específico
+
+## 3 - Dependências circulares
+```js
+A importa B
+B importa A
+```
+
+Pode:
+- gerar undefined
+- incialização parcial
+- comportamento inconsistente
+- bugs silenciosos
+
+## 4 - Abstração precoce
+
+Basicamente, querer modularizar demais sem necessidade.
+-> Cria complexidade inútil
+
+Exemplo:
+```js
+// Módulo de usuário com 2 funções
+export function criarUsuario() {}
+export function deletarUsuario() {}
+
+// Módulo de autenticação com 1 função
+export function autenticar() {}
+```
+
+-> Módulos com poucas responsabilidades, mas sem necessidade real de separação.
+
+---
+
+# 10 - Bundlers
+
+---
+
+# 11 - Dependency injection
+
+---
+
+# 12 - Separation of concerns
+
+---
+
+# 13 - Public API do módulo
+
+---
+
+# 14 - Encapsulamento na modularização
+
+---
+
+# 15 - Anti-patterns reais
