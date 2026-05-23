@@ -67,7 +67,6 @@ function finalizarPedido(pedido) {
     gerarPdfComBibliotecaXPTO(pedido);
 }
 ```
-(essas funções estão no mesmo módulo)
 
 problema:
 esse código sabe detalhes demais.
@@ -93,7 +92,7 @@ function finalizarPedido(pedido, pedidoRepo, notificacaoService, notaService) {
     notaService.gerar(pedido);
 }
 ```
-No caso, módulo checkout importa as dependências e executa as operações necessárias sem conhecer os detalhes internos de cada serviço.
+No exemplo, o módulo recebe dependências externas e usa apenas seus comportamentos esperados.
 
 Ele não sabe como pedidoRepo salva, como notificacaoService envia email ou como notaService gera PDF. Ele só sabe que precisa dessas operações, mas não como elas são implementadas.
 
@@ -129,6 +128,8 @@ baixo acoplamento NÃO é:
 baixo acoplamento é:
 
 <span style="color: #64ac6e;">depender de contratos/comportamentos, não implementações específicas</span>
+
+> <span style="color: white; font-weight: bold">baixo acoplamento não significa usar menos imports, significa depender menos de implementações concretas.</span>
 
 ## 3 - Alta coesão
 
@@ -170,7 +171,7 @@ Padrão muito utilizado pelo mercado moderno (React, Angular, Backend...)
             Modal.js
 ```
 
-A força dessa arquitetura é explicada:
+A principal vantagem desse padrão:
 O sistema é organizado por domínio de negócio, não por tipo técnico. Isso facilita a evolução do sistema, pois cada módulo é responsável por um aspecto específico do negócio, e as dependências são controladas. O código fica mais fácil de entender, manter e escalar.
 
 Estrutura antiga:
@@ -231,9 +232,8 @@ podem gerar:
 
 ---
 
-# 5 - Tipos principais de arquitetura
+# 5 - Arquiteturas relacionadas à modularização
 
-- [Layered](#Layered)
 - [Clean architecture](#Clean%20architecture)
 - [Hexagonal](#Hexagonal)
 - [Vertical slice](#Vertical%20slice)
@@ -246,7 +246,7 @@ podem gerar:
 
 # 6 - Modularização + escalabilidade
 
-Ao crescer, o projeto evolui para:
+Em sistemas maiores, é comum evoluir para módulos mais independentes:
 > <span style="color:white;">Módulos independentes</span>
 ```
 /modules
@@ -254,9 +254,8 @@ Ao crescer, o projeto evolui para:
     /billing
     /orders
 ```
-Cada módulo pode virar:
-- microserviço
-- lib separada
+
+uma boa modularização facilita futuras separações arquiteturais, incluindo extração para serviços independentes.
 
 # 7 - modularização + bundlers (webpack, vite)
 
@@ -321,7 +320,7 @@ B importa A
 
 Pode:
 - gerar undefined
-- incialização parcial
+- inicialização parcial
 - comportamento inconsistente
 - bugs silenciosos
 
@@ -368,23 +367,9 @@ formatarNome(nome) {
 
 mas cria:
 ```js
-class NomeFormatterFactory {
-    formatar(nome) {
-        return nome.trim().toUpperCase();
-    }
-}
-
-class NomeFormatterStrategy {
-    formatar(nome) {
-        return nome.trim().toUpperCase();
-    }
-}
-
-class AbstractNomeFormatterBase {
-    formatar(nome) {
-        return nome.trim().toUpperCase();
-    }
-}
+class NomeFormatterManager
+class NomeFormatterFactory
+class AbstractNomeFormatterBase
 ```
 Utilizando de Factory, Strategy e Abstract Factory para algo simples demais.
 
