@@ -59,41 +59,76 @@ Isso facilita:
 módulos não devem depender fortemente uns dos outros
 
 exemplo negativo:
+checkout -> 
 ```js
-import { salvarPedido } from '../pedido/service.js';
-import { enviarEmail } from '../email/service.js';
-import { gerarNota } from '../nota/service.js';
+function finalizarPedido(pedido) {
+    salvarNoBancoMySQL(pedido);
+    enviarEmailSMTP(pedido.cliente.email);
+    gerarPdfComBibliotecaXPTO(pedido);
+}
 ```
+(essas funções estão no mesmo módulo)
 
-módulo fazendo tudo = acoplamento alto.
+problema:
+esse código sabe detalhes demais.
 
-exemplo positivo:
+ele sabe:
+- qual banco
+- como envia email
+- qual biblioteca gera PDF
+
+quebra se trocar:
+- MySQL por PostgreSQL:
+- SMTP por API de email:
+- PDF lib:
+
+isso é acoplamento forte, o módulo depende de detalhes de implementação de outros.
+
+Versão melhor:
+
 ```js
-// pedido/service.js
-export function criarPedido(dados, servicoNotificacao) {
-    const pedido = { id: Date.now(), ...dados };
-    servicoNotificacao.confirmarPedido(pedido);
-    return pedido;
+function finalizarPedido(pedido, pedidoRepo, notificacaoService, notaService) {
+    pedidoRepo.salvar(pedido);
+    notificacaoService.enviarConfirmacao(pedido);
+    notaService.gerar(pedido);
 }
-
-// email/service.js
-export function confirmarPedidoPorEmail(pedido) {
-    console.log(`Email enviado para o pedido ${pedido.id}`);
-}
-
-// app.js
-import { criarPedido } from './pedido/service.js';
-import { confirmarPedidoPorEmail } from './email/service.js';
-
-const servicoNotificacao = {
-    confirmarPedido: confirmarPedidoPorEmail,
-};
-
-criarPedido({ cliente: 'Nicolas', total: 199.9 }, servicoNotificacao);
 ```
+No caso, módulo checkout importa as dependências e executa as operações necessárias sem conhecer os detalhes internos de cada serviço.
 
-Aqui, o módulo de pedido depende de um contrato simples (confirmarPedido), e não de uma implementação específica.
-Isso reduz acoplamento e facilita troca de estratégia (email, SMS, push) sem alterar a regra de negócio.
+Ele não sabe como pedidoRepo salva, como notificacaoService envia email ou como notaService gera PDF. Ele só sabe que precisa dessas operações, mas não como elas são implementadas.
+
+## analogia fácil
+
+> <span style="color: white; font-weight: bold">alto acoplamento:</span>
+
+você dirige e precisa saber:
+
+- como motor funciona
+- como câmbio funciona
+- como injeção funciona
+
+> <span style="color: white; font-weight: bold">baixo acoplamento:</span>
+
+você só usa:
+
+acelerar
+frear
+virar
+
+detalhes internos ficam escondidos.
+
+isso é abstração + baixo acoplamento.
+
+## o conceito correto
+
+baixo acoplamento NÃO é:
+
+<span style="color: #bd5353;">"usar menos imports"</span>
+<span style="color: #bd5353;">"dividir arquivos"</span>
+
+baixo acoplamento é:
+
+<span style="color: #64ac6e;">depender de contratos/comportamentos, não implementações específicas</span>
 
 ## 3 - Alta coesão
 
@@ -196,7 +231,7 @@ podem gerar:
 
 ---
 
-# Tipos principais de arquitetura
+# 5 - Tipos principais de arquitetura
 
 - [Layered](#Layered)
 - [Clean architecture](#Clean%20architecture)
@@ -290,22 +325,74 @@ Pode:
 - comportamento inconsistente
 - bugs silenciosos
 
-## 4 - Abstração precoce
+## 4 - Abstração prematura
 
-Basicamente, querer modularizar demais sem necessidade.
--> Cria complexidade inútil
+Cenário simples
+É necessário cadastrar usuário.
 
-Exemplo:
+normal:
 ```js
-// Módulo de usuário com 2 funções
-export function criarUsuario() {}
-export function deletarUsuario() {}
+function cadastrarUsuario (usuario) {
+    salvar(usuario);
+}
+```
+simples.
 
-// Módulo de autenticação com 1 função
-export function autenticar() {}
+abstração prematura:
+```js
+class AbstractUserPersistenceFactoryManager {
+    criarPersistencia() {
+        if (process.env.DB === 'mysql') {
+            return new MySQLUserRepository();
+        } else if (process.env.DB === 'postgres') {
+            return new PostgresUserRepository();
+        } else {
+            throw new Error('Banco de dados não suportado');
+        }
+    }
+}
 ```
 
--> Módulos com poucas responsabilidades, mas sem necessidade real de separação.
+só que projeto:
+- tem 1 banco
+- 1 cadastro
+- nunca vai trocar isso
+
+outro exemplo:
+É necessário formatar nome:
+```js
+formatarNome(nome) {
+    return nome.trim().toUpperCase();
+}
+```
+
+mas cria:
+```js
+class NomeFormatterFactory {
+    formatar(nome) {
+        return nome.trim().toUpperCase();
+    }
+}
+
+class NomeFormatterStrategy {
+    formatar(nome) {
+        return nome.trim().toUpperCase();
+    }
+}
+
+class AbstractNomeFormatterBase {
+    formatar(nome) {
+        return nome.trim().toUpperCase();
+    }
+}
+```
+Utilizando de Factory, Strategy e Abstract Factory para algo simples demais.
+
+<span style="color: #64ac6e;">Abstração saudável:</span>
+problema REAL apareceu -> abstrai.
+
+<span style="color: #bd5353;">Abstração prematura:</span>
+problema IMAGINADO -> abstrai.
 
 ---
 

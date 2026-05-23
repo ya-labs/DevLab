@@ -120,3 +120,4 @@ Opcional:
 - Auto Rename Tag
 - Live Server
 - Material Icon Theme
+- Markdown Preview Github Styling
