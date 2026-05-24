@@ -1,3 +1,5 @@
+## O que e ESM
+
     ```js
 ES6 Modules (ou ESM) é o sistema nativo de módulos do JavaScript, lançado em junho de 2015.
 
@@ -123,10 +125,27 @@ import { algo } from './arquivo.js';
 
 # ______________________________________________________________________________________________
 
+## O que é Tree Shaking:
+
 # . 5 - Tree-shaking
 -> é uma técnica de otimização onde o bundler remove código que não está sendo usado (dead code elimination).
 -> isso só funciona com ES6 Modules porque o import é estático, ou seja, o bundler sabe exatamente o que está sendo importado e pode eliminar o que não é usado.
 -> isso melhora a performance do aplicativo, reduzindo o tamanho do bundle final.
+
+Exemplo:
+
+export function somar() {}
+export function multiplicar() {}
+
+Import:
+
+import { somar } from './math.js';
+
+Build:
+
+multiplicar removido
+
+Isso reduz tamanho final.
 
 # ______________________________________________________________________________________________
 
