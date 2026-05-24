@@ -18,7 +18,7 @@ ou seja:
 
 # 2 - Princípios que guiam a modularização moderna
 
-## 1 - Single responsibility (SRP)
+## 1 - Single Responsibility (SRP)
 
 Cada módulo deve ter uma única responsabilidade clara
 
@@ -77,9 +77,9 @@ ele sabe:
 - qual biblioteca gera PDF
 
 quebra se trocar:
-- MySQL por PostgreSQL:
-- SMTP por API de email:
-- PDF lib:
+- MySQL por PostgreSQL
+- SMTP por API de email
+- PDF lib
 
 isso é acoplamento forte, o módulo depende de detalhes de implementação de outros.
 
@@ -234,13 +234,15 @@ podem gerar:
 
 # 5 - Arquiteturas relacionadas à modularização
 
-- [Clean architecture](#Clean%20architecture)
-- [Hexagonal](#Hexagonal)
-- [Vertical slice](#Vertical%20slice)
-- [Feature-first](#Feature%20first)
-- [Camadas (layered architecture)](#Camadas-layered%20architecture)
-- [Onion architecture](#Onion%20architecture)
-- [Microservices](#Microservices)
+- Clean architecture
+- Hexagonal
+- Vertical Slice
+- Feature-First
+- Camadas (Layered Architecture)
+- Onion Architecture
+- Microservices
+
+Essas arquiteturas aprofundam conceitos de modularização e organização de sistemas, e podem ser estudadas separadamente.
 
 ---
 
@@ -276,7 +278,7 @@ Módulos bem separados:
 import * as repo from "./repo.js";
 jest.spyOn(repo, "salvar")
 ```
-isso só funciona bem com baixo acoplamento.
+baixo acoplamento facilita testes isolados e mocks mais limpos.
 ^^^ APROFUNDAR
 
 ---
@@ -339,9 +341,9 @@ abstração prematura:
 ```js
 class AbstractUserPersistenceFactoryManager {
     criarPersistencia() {
-        if (process.env.DB === 'mysql') {
+        if (tipoBanco === 'mysql') {
             return new MySQLUserRepository();
-        } else if (process.env.DB === 'postgres') {
+        } else if (tipoBanco === 'postgres') {
             return new PostgresUserRepository();
         } else {
             throw new Error('Banco de dados não suportado');
@@ -369,7 +371,7 @@ class NomeFormatterManager
 class NomeFormatterFactory
 class AbstractNomeFormatterBase
 ```
-Utilizando de Factory, Strategy e Abstract Factory para algo simples demais.
+Utilizando de Factory, Manager e Abstract Base para algo simples demais.
 
 <span style="color: #64ac6e;">Abstração saudável:</span>
 problema REAL apareceu -> abstrai.
@@ -383,7 +385,7 @@ problema IMAGINADO -> abstrai.
 
 Bundlers são ferramentas que analisam seu projeto inteiro e empacotam os arquivos para execução otimizada
 
-Em aplicações modernas, raramente enviamos dezenas ou centenas de arquivos JavaScript para produção.
+Em muitas aplicações modernas, ainda usamos bundlers para otimização, mesmo com suporte nativo a módulos no navegador.
 
 O bundler resolve isso.
 
@@ -558,7 +560,7 @@ Ou:
 const pedidoService = new PedidoService(new SendgridEmailService());
 ```
 
-Agora a classe depende de comportamento esperado:
+Agora a classe só espera que a dependência possua o método enviar()
 
 ```js
 enviar();
@@ -614,7 +616,7 @@ Exemplo de preocupações:
 function cadastrarUsuario(dados) {
     validarDados(dados);
 
-    fetch('/api/usuarios' {
+    fetch('/api/usuarios', {
         method: 'POST',
         body: JSON.stringify(dados),
     });
@@ -653,7 +655,7 @@ Cada responsabilidade separada.
 - código legível
 - reutilização
 
-Modularização é uma ferramente para aplicar separation of concerns, mas não garante isso sozinha. É necessário projetar os módulos com essa filosofia em mente.
+Modularização é uma ferramenta para aplicar separation of concerns, mas não garante isso sozinha. É necessário projetar os módulos com essa filosofia em mente.
 
 ---
 
@@ -681,7 +683,7 @@ function validarCPFInternamente() {}
 function normalizarDados() {}
 ```
 
-Sem export, privadas ao módulo.
+não exportadas, inacessíveis externamente ao módulo
 
 ### Ideia central
 
@@ -755,8 +757,8 @@ autenticarBanco();
 
 Diretamente:
 - quebraria fluxo
-- criaria credênciais perigosas
-- permitira uso incorreto
+- poderia expor operações sensíveis
+- permitiria uso incorreto
 
 ### Relação com OOP
 
