@@ -1,0 +1,25 @@
+Como lidar com ações do usuário (clique)
+
+Temos um componente de botão e faremos ele reagir a uma ação do usuário.
+
+no React, eventos são passados como props
+exemplo:
+<button onclick={handleClick}> Iniciar treino</button>
+
+onClick → evento de clique
+{handleClick} → função que será executada
+
+quando o usuário clicar, essa função roda
+
+exemplo mínimo:
+function App() {
+    function handleClick() {
+        console.log("clicou");
+    }
+
+    return <button onClick={handleClick}>Iniciar treino</button>;
+}
+
+associação do evento ->
+a função não é chamada no onClick, ela é passada como referência.
+React vai chamá-la quando o evento acontecer.

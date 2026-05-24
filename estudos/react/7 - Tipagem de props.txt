@@ -1,0 +1,89 @@
+Entendendo tipagem de forma prática
+
+O problema que o TypeScript resolve {
+    Em JavaScript puro, podemos fazer isso:
+    function soma(a,b) {
+        return a + b;
+    }
+    - e nada impede alguém de chamar:
+    soma("1",2);
+
+    resultado: "12" (bug silencioso)
+
+    entra o TypeScript que adiciona:
+    👉 tipos para evitar erros em tempo de desenvolvimento
+
+    exemplo com tipo
+    function soma(a: number, b: number) {
+        return a + b;
+    }
+
+    soma("1", 2);
+
+    👉 dá erro ANTES de rodar
+}
+
+___________________________________________________________________________
+
+Trazendo isso pro React {
+    componentes são funções,
+    props são parâmetros dessas funções
+
+    sem typescript ->
+    function TrainButton(props) {
+        return <button>{props.isTraining}</button>;
+    }
+
+    props pode ser qualquer coisa
+    risco de bug alto
+
+    com TypeScript ->
+
+    o formato é definido:
+
+    type TrainButtonProps = {
+        isTraining: boolean;
+        onClick: () => void;
+    };
+
+    o que é esse type
+
+    é um “molde” (contrato)
+
+    você está dizendo:
+
+    “esse componente só aceita isso aqui”
+}
+
+___________________________________________________________________________
+
+Usando o tipo {
+    function TrainButton({ isTraining, onClick }: TrainButtonProps) {}
+
+    isso significa:
+
+    - o parâmetro da função segue esse formato
+    - o TS valida automaticamente
+    
+    💡 desestruturação + tipagem
+
+    isso aqui:
+    { isTraining, onClick }
+    é desestruturação.
+
+    isso aqui:
+    : TrainButtonProps
+    é a tipagem desse objeto.
+
+    juntando tudo fica:
+    “essa função recebe um objeto com essa estrutura específica”
+}
+
+___________________________________________________________________________
+
+Inferência de tipo {
+    o TS tenta adivinhar o tipo automaticamente
+
+    mas props ele não adivinha porque são externas ao componente.
+    é preciso declarar
+}

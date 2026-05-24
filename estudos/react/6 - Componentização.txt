@@ -1,0 +1,124 @@
+Separando o código em partes reutilizáveis 
+
+o problema que estamos resolvendo:
+o App hoje faz tudo: {
+    título
+    contador
+    texto
+    botão
+    lógica
+
+    ainda está pequeno, então ok
+    mas isso escala muito mal
+
+    ideia principal:
+    quebrar a interface em partes menores
+    cada parte vira um componente.
+
+    exemplo do código atual:
+
+    <h1>Meu treino</h1>
+    <h2>Treinos feitos</h2>
+    <p>Status</p>
+    <button>...</button>
+    
+    cada pedaço pode virar um componente:
+
+    Header → título
+    TrainingStatus → texto
+    TrainButton → botão
+}
+
+___________________________________________________________________________
+
+exemplo simples {
+    dentro do mesmo arquivo, é possível criar:
+
+    function TrainButton({ isTraining, onClick }) {
+        return (
+            <button onClick={onClick}>
+            {isTraining ? "Parar" : "Treinar"}
+            </button>
+        );
+    }
+
+    usando ele no App:
+
+    <TrainButton 
+        isTraining={isTraining} 
+        onClick={handleTrainButton} 
+    />
+
+    conceito novo 
+    👉 props
+
+    isTraining → dado que o componente recebe
+    onClick → função que ele executa
+}
+
+___________________________________________________________________________
+
+props {
+    são dados que um componente recebe pra funcionar.
+    parâmetros de entrada de um componente.
+
+    exemplo simples fora do React
+    function saudacao(nome) {
+        return "Olá " + nome;
+    }
+
+    aqui nome é o dado de entrada
+
+    agora no React
+    function Saudacao(props) {
+        return <h1>Olá {props.nome}</h1>;
+    }
+
+    props é um objeto
+    props.nome é o dado que veio de fora
+
+    usando o componente
+    <Saudacao nome="Nícolas" />
+    
+    o que acontece por trás
+    React transforma isso em algo como:
+    Saudacao({ nome: "Nícolas" });
+
+    👉 props = objeto passado para a função
+
+    desestruturação
+
+    em vez de:
+
+    function TrainButton(props) {
+        return <button>{props.isTraining}</button>;
+    }
+
+    foi feito:
+
+    function TrainButton({ isTraining, onClick }) {}
+
+    isso é só um atalho
+
+    equivale a:
+
+    const isTraining = props.isTraining;
+    const onClick = props.onClick;
+
+    então props sempre são:
+
+    - um objeto
+    - com dados vindos de fora
+    - usados pelo componente
+
+    ⚠️ regra importante
+
+    - props são somente leitura
+
+    não deve ser feito:
+
+    props.isTraining = true; // ❌ errado
+
+    porque:
+    - quem controla o valor é o componente pai
+}

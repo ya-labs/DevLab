@@ -1,0 +1,56 @@
+Diferença entre dados internos e externos
+
+definição direta
+state = dado interno do componente
+props = dado vindo de fora (de outro componente)
+
+tipo	origem	quem controla
+state	dentro	o próprio componente
+props	fora	componente pai
+
+no App:
+const [isTraining, setIsTraining] = useState(false);
+
+isso é state porque:
+- criado dentro do componente
+- controlado por ele
+
+passando para o filho
+<TrainButton isTraining={isTraining} />
+-> aqui vira props
+
+o mesmo dado muda de “papel”
+
+- isTraining no App = state
+- isTraining no TrainButton = props
+
+fluxo de dados (regra do React)
+
+-> dados fluem de cima para baixo
+
+App (state)
+  ↓
+TrainButton (props)
+
+-> componente filho NÃO altera props
+
+isso aqui é errado:
+props.isTraining = true; // ❌
+
+👉 só quem criou o state pode alterar ele
+então como o filho “altera” algo?
+
+ele não altera direto
+ele chama uma função do pai
+
+exemplo:
+<TrainButton onClick={handleTrainButton} />
+
+fluxo completo
+- pai tem estado
+- pai passa props
+- filho usa props
+- filho dispara evento
+- pai atualiza estado
+- React re-renderiza
+

@@ -1,0 +1,254 @@
+Fazendo a interface reagir ao clique
+
+estado é:
+uma informação que pode mudar ao longo do tempo e afeta a interface
+
+exemplo:
+- botão clicado ou não
+- treino iniciado ou não
+- usuário logado ou não
+
+No React, toda vez que o estado muda, a tela é renderizada novamente.
+Isso é o coração do React.
+
+___________________________________________________________________________
+
+EXEMPLO MÍNIMO {
+    import { useState } from "React";
+
+    function App() {
+        const [isTraining, setIsTraining] = useState(false);
+
+        function handleTrainButton() {
+            setIsTraining(true);
+        }
+
+        return (
+            <div>
+                <h1>Meu treino</h1>
+
+                {isTraining ? (
+                    <p>Treino iniciado</p>
+                ) : (
+                    <button onClick={handleTrainButton}>Treinar</button>
+                )}
+            </div>
+        );
+    }
+
+    export default App;
+}
+
+___________________________________________________________________________
+
+EXPLICAÇÃO TÉCNICA {
+    1 - criando o estado
+    const [isTraining, setIsTraining] = useState(false);
+
+    isso aqui faz 3 coisas:
+    - cria a variável: isTraining
+    - cria uma função: setIsTraining
+    - define o valor inicial: false
+
+    2 - alterando o estado
+    setIsTraining(true);
+    quando isso roda:
+    - o valor muda de false -> true
+    - o React re-renderiza o componente
+
+    3 - renderização condicional
+    {isTraining ? (...) : (...)}
+    isso é um ternário.
+    ou então:
+    {isTraining && (...)}
+}
+
+___________________________________________________________________________
+
+useState e Desestruturação {
+    O que realmente está acontecendo nessa linha
+    const [isTraining, setIsTraining] = useState(false);
+
+    👉 o useState retorna um array, não um objeto
+
+    algo assim (simplificado):
+    [valor, funcaoParaAtualizar]
+
+    então isso aqui:
+    const [isTraining, setIsTraining]
+    é desestruturação de array
+
+    equivalente sem desestruturação
+    se você não usasse desestruturação:
+    const state = useState(false);
+
+    const isTraining = state[0];
+    const setIsTraining = state[1];
+
+    não devo pensar no useState como:
+    - “criar uma variável”
+
+    penso como:
+    - registrar um estado dentro do React
+
+    quando você chama:
+
+    useState(false)
+
+    o React:
+
+    guarda esse valor internamente
+    associa ele ao componente
+    controla atualizações
+
+    👉 isTraining não é uma variável comum
+    👉 é um “snapshot” do estado naquele render (ele é uma "foto" do valor naquele momento da execução)
+    
+    Como o React funciona {
+        toda vez que o componente roda:
+
+        function App() {
+            const [isTraining, setIsTraining] = useState(false);
+        }
+
+        essa função é executada do zero
+
+        então o que acontece com isTraining?
+        cada render:
+
+        - o React pega o valor atual guardado internamente
+        - entrega esse valor pra variável isTraining
+        - você usa esse valor durante aquela execução
+
+        analogia simples
+        - o React tem um “banco interno de estados”
+        a cada render ele faz:
+        “toma aqui o valor atual pra você usar”
+
+        visualizando isso -> 
+        render 1:
+        isTraining = false
+        você clica → chama setIsTraining(true)
+        
+        render 2:
+        isTraining = true
+    }
+}
+
+___________________________________________________________________________
+
+RENDERIZAÇÃO NO REACT {
+    O que acontece por trás quando o estado muda
+
+    1 - o React re-renderiza o componente inteiro? {
+        sim. quando é executado a função setIsTraining(true);
+        o React:
+        - agenda uma atualização
+        - executa novamente a função do componente (nesse caso App())
+        - gera uma nova árvore de elementos (virtual)
+        - compara com a anterior
+        - atualiza só o que mudou no DOM real
+
+        ponto importante !!!
+        - o componente é re-executado inteiro
+        - mas o DOM não é recriado inteiro.
+
+        React roda tudo de novo “no papel”
+        depois compara com o que já existe
+        só altera o necessário
+
+        👉 isso é o famoso Virtual DOM
+    }
+
+    2 - por que variável normal não funciona? {
+        exemplo:
+        let isTraining = false;
+
+        function handleClick () {
+            isTraining = true;
+        } 
+        
+        isso NÃO funciona
+        - o React não "observa" variáveis comuns
+        - não sabe que algo mudou
+        - não re-renderiza automaticamente
+
+        React só reage a:
+        - mudanças de estado (useState)
+        - mudança de props
+    }
+
+    3 - o que o useState faz de verdade {
+        const [isTraining, setIsTraining] = useState(false);
+        
+        por baixo dos panos acontece algo assim:
+        - React guarda esse valor internamente
+        - associa ele ao componente
+        - controla quando ele muda
+
+        ao chamar setState
+        setIsTraining(true);
+        - não muda imediatamente
+        - avisa o React: "estado mudou"
+        - React agenda re-renderização
+        - React executa o componente de novo
+        - novo valor é usado
+
+        DETALHE IMPORTANTE !! 
+        -> setState não é síncrono
+        setIsTraining(true);
+        console.log(isTraining); -> ainda pode imprimir false
+        porque a atualização ainda não aconteceu, React vai atualizar depois
+    }
+
+    4 - Ordem de execução de um componente {
+        primeira vez:
+        - React chama App()
+        - executa todo código dentro
+        - encontra useState(false)
+        - guarda esse estado
+        - retorna JSX
+        - renderiza na tela
+
+        quando estado muda:
+        - você chama setIsTraining(true)
+        - React agenda atualização
+        - React chama App() de novo
+        - agora isTraining = true
+        - retorna novo JSX
+        - React compara com o anterior
+        - atualiza só o necessário
+    } 
+
+    React funciona como um modelo baseado em disparo explícito.
+    - o sinal é enviado (setState)
+    - React reage.
+    não existe
+    - watcher
+    - proxy automático (igual Vue moderno)
+    - dirty checking (igual AngularJS)
+    React é pull → push controlado
+
+    Variável normal -> só vive na execução da função
+    estado -> vive entre renders e controla usuário
+    
+    toda vez que o componente roda:
+
+    function App() {
+        let x = 0;
+    }
+
+    - x é recriado do zero
+
+    mas:
+
+    const [x, setX] = useState(0);
+
+    - o valor é persistido entre renders
+
+    não é só sobre “atualizar tela”
+
+    é sobre:
+
+    - persistência + controle de render
+}
