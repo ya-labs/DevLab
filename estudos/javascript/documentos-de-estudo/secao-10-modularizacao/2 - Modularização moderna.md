@@ -270,16 +270,67 @@ ESM entra aqui forte ([ver explicação em ES6 Modules](1%20-%20ES6%20Modules.md
 
 # 8 - Modularização + testes
 
-Módulos bem separados:
-- fácil de testar
-- fácil de mockar
+Uma boa modularização facilita muito a criação de testes, porque cada parte do sistema pode ser testada de forma isolada.
+
+Quando um módulo tem uma responsabilidade clara, fica mais fácil verificar se ele funciona corretamente sem depender do sistema inteiro.
+
+Exemplo:
 
 ```js
-import * as repo from "./repo.js";
-jest.spyOn(repo, "salvar")
+// usuarioService.js
+export function criarUsuario(dados, repo) {
+    if (!dados.nome) {
+        throw new Error("Nome é obrigatório");
+    }
+
+    return repo.salvar(dados);
+}
 ```
-baixo acoplamento facilita testes isolados e mocks mais limpos.
-^^^ APROFUNDAR
+
+No teste, não é necessário usar o banco real:
+
+```js
+const repoMock = {
+    salvar: jest.fn(),
+};
+
+criarUsuario({ nome: "Nícolas" }, repoMock);
+
+expect(repoMock.salvar).toHaveBeenCalled();
+```
+
+Nesse caso, o teste verifica apenas a regra do `usuarioService`, sem depender de banco, API ou arquivos externos.
+
+Quando o código é muito acoplado, testar fica mais difícil, porque uma função simples pode acabar exigindo várias dependências reais para funcionar.
+
+Resumo:
+- módulos pequenos são mais fáceis de testar
+- baixo acoplamento facilita mocks
+- responsabilidades claras reduzem testes complexos
+- código modular permite testar partes específicas do sistema
+
+### Extra: introdução ao Jest
+
+Framework de testes para JavaScript. Muito usado para testar código.
+
+exemplo:
+```js
+function somar(a, b) {
+    return a + b;
+}
+```
+Teste:
+```js
+test("deve somar corretamente", () => {
+    expect(somar(2, 3)).toBe(5);
+});
+```
+Nesse caso:
+- test() define um teste
+- expect() verifica um resultado esperado
+- toBe() compara o valor retornado
+
+jest.fn() cria uma função falsa (mock), usada para simular comportamentos em testes.
 
 ---
 
