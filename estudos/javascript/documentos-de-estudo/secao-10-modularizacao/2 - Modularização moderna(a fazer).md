@@ -259,12 +259,10 @@ uma boa modularização facilita futuras separações arquiteturais, incluindo e
 
 # 7 - modularização + bundlers (webpack, vite)
 
-ESM entra aqui forte:
-- tree-shaking
+ESM entra aqui forte ([ver explicação em ES6 Modules](1%20-%20ES6%20Modules.md#o-que-e-esm)):
+- [tree-shaking](1%20-%20ES6%20Modules.md#o-que-e-tree-shaking)
 - code splitting
 - lazy loading
-
-^^^ APROFUNDAR
 
 ---
 
@@ -383,22 +381,499 @@ problema IMAGINADO -> abstrai.
 
 # 10 - Bundlers
 
+Bundlers são ferramentas que analisam seu projeto inteiro e empacotam os arquivos para execução otimizada
+
+Em aplicações modernas, raramente enviamos dezenas ou centenas de arquivos JavaScript para produção.
+
+O bundler resolve isso.
+
+Ele:
+- lê imports do projeto
+- entende dependências
+- junta arquivos
+- remove código morto
+- otimiza assets
+- divide código quando necessário
+
+Exemplo:
+
+Projeto:
+```
+/src
+    main.js
+    usuario.js
+    pedido.js
+```
+
+código:
+
+```js
+// main.js
+import { criarUsuario } from './usuario.js';
+import { criarPedido } from './pedido.js';
+```
+
+Sem bundler:
+
+O navegador precisa carregar main.js, usuario.js e pedido.js separadamente, o que gera múltiplas requisições HTTP.
+
+Resultando:
+- projeto lento
+- muitos requests
+- sem otimização
+- sem minificação
+- sem code splitting
+
+Eles existem para transformar código de desenvolvimento em código de produção.
+
+Com bundler, vira algo como:
+
+```
+dist/app.bundle.js
+```
+
+Processado e otimizado.
+
+## Principais bundlers
+
+> <span style="color: white; font-weight: bold">Webpack</span>
+
+- Muito popular historicamente.
+- Extremamente configurável.
+- Usado em muitos projetos legados e grandes aplicações.
+
+> <span style="color: white; font-weight: bold">Vite</span>
+
+- Padrão moderno.
+- Muito mais rápido no desenvolvimento.
+- Usa [ESM](1%20-%20ES6%20Modules.md#o-que-e-esm) nativamente durante dev
+- Build final geralmente usa Rollup internamente
+
+> <span style="color: white; font-weight: bold">Rollup</span>
+
+- Excelente para bibliotecas.
+- Muito eficiente em [tree-shaking](1%20-%20ES6%20Modules.md#o-que-e-tree-shaking).
+
+> <span style="color: white; font-weight: bold">Parcel</span>
+
+- Mais simples
+- Quase zero configuração
+
+## Conceitos importantes
+
+> <span style="color: white; font-weight: bold">Bundle</span> 
+
+Arquivo final gerado:
+
+```
+app.bundle.js (padrão de nome, pode ser customizado)
+```
+
+> <span style="color: white; font-weight: bold">Code splitting</span>
+
+Divide bundle em partes menores.
+
+Ao invés de:
+
+```
+app gigante com 5mb
+```
+
+Vira:
+
+```
+main.js
+dashboard.chunk.js
+admin.chunk.js
+```
+
+Carrega sob demanda.
+
+> <span style="color: white; font-weight: bold">Lazy loading</span>
+
+Carregamento tardio.
+
+Exemplo:
+
+```js
+const dashboard = await import('./dashboard.js');
+```
+
+Só carrega quando necessário.
+
 ---
 
 # 11 - Dependency injection
+
+Dependency injection (DI) é um padrão onde dependências são fornecidas externamente ao módulo, em vez de serem criadas dentro dele.
+
+Objetivo:
+
+reduzir acoplamento.
+
+> <span style="color: #bd5353;">Sem DI:</span>
+
+```js
+class PedidoService {
+    constructor() {
+        this.emailService = new SmtpEmailService();
+    }
+
+    finalizar() {
+        this.emailService.enviar();
+    }
+}
+```
+
+Problema:
+
+`PedidoService` depende diretamente de `SmtpEmailService`.
+
+Se trocar implementação para `SendgridEmailService`
+Precisa alterar o código.
+
+> <span style="color: #64ac6e;">Com DI:</span>
+
+```js
+class PedidoService {
+    constructor(emailService) {
+        this.emailService = emailService;
+    }
+
+    finalizar() {
+        this.emailService.enviar();
+    }
+}
+```
+
+Uso:
+
+```js
+const pedidoService = new PedidoService(new SmtpEmailService());
+```
+
+Ou:
+
+```js
+const pedidoService = new PedidoService(new SendgridEmailService());
+```
+
+Agora a classe depende de comportamento esperado:
+
+```js
+enviar();
+```
+
+Não da implementação concreta.
+
+## Benefícios:
+- baixo acoplamento
+- troca fácil de implementações
+- testes mais simples
+- código mais flexível
+- maior reutilização
+
+## Em testes
+
+> <span style="color: #bd5353;">Sem DI:</span>
+
+difícil mockar.
+
+> <span style="color: #64ac6e;">Com DI:</span>
+
+```js
+const mockEmailService = {
+    enviar() {
+        console.log("mock");
+    },
+};
+
+new PedidoService(mockEmailService);
+```
+
+Muito mais simples.
 
 ---
 
 # 12 - Separation of concerns
 
+Significa separar responsabilidades distintas.
+
+Cada parte do sistema deve cuidar de sua própria preocupação.
+
+Exemplo de preocupações:
+- interface
+- regras de negócio
+- persistência
+- validação
+- autenticação
+
+### Errado:
+
+```js
+function cadastrarUsuario(dados) {
+    validarDados(dados);
+
+    fetch('/api/usuarios' {
+        method: 'POST',
+        body: JSON.stringify(dados),
+    });
+
+    atualizarTela();
+
+    enviarEmailBoasVindas();
+}
+```
+
+Essa função faz tudo.
+
+Mistura:
+
+- validação
+- API
+- UI
+- notificação
+
+### Certo:
+
+```js
+usuarioValidator.validar(dados);
+usuarioRepository.salvar(dados);
+usuarioNotifier.enviarBoasVindas(dados);
+usuarioView.atualizar();
+```
+
+Cada responsabilidade separada.
+
+### Benefícios:
+
+- manutenção simples
+- menos bugs
+- testes melhores
+- código legível
+- reutilização
+
+Modularização é uma ferramente para aplicar separation of concerns, mas não garante isso sozinha. É necessário projetar os módulos com essa filosofia em mente.
+
 ---
 
 # 13 - Public API do módulo
+
+Todo módulo expõe apenas o necessário.
+
+Isso é sua API pública.
+
+Exemplo:
+
+```js
+// usuario.js
+export function criarUsuario () {}
+export function buscarUsuario () {}
+```
+
+Essas funções fazem parte da API pública.
+Outros módulos podem usá-las.
+
+### O que não faz parte
+
+```js
+function validarCPFInternamente() {}
+function normalizarDados() {}
+```
+
+Sem export, privadas ao módulo.
+
+### Ideia central
+
+O módulo define:
+`O que o mundo externo pode usar`
+E esconde:
+`Como aquilo funciona internamente`
+
+### Analogia: controle remoto
+
+API pública:
+```
+Ligar
+Desligar
+Volume
+```
+
+Interno:
+
+```
+Circuitos
+Processamento
+Hardware
+```
+
+Usuário não precisa saber.
+
+### Benefícios
+- reduz acoplamento
+- protege implementação
+- facilita manutenção
+- evita uso indevido
 
 ---
 
 # 14 - Encapsulamento na modularização
 
+Encapsulamento significa esconder detalhes internos e expor apenas o necessário.
+
+Modularização ajuda diretamente nisso.
+
+### Exemplo:
+
+```js
+// pagamento.js
+
+function validarCartao() {}
+function autenticarBanco() {}
+function gerarToken() {}
+
+export function processarPagamento() {
+    validarCartao();
+    autenticarBanco();
+    gerarToken();
+}
+```
+
+Exposto:
+
+```js
+processarPagamento();
+```
+
+### Por que isso importa?
+
+Se outro módulo pudesse chamar:
+
+```js
+autenticarBanco();
+```
+
+Diretamente:
+- quebraria fluxo
+- criaria credênciais perigosas
+- permitira uso incorreto
+
+### Relação com OOP
+
+Mesmo fora de classes, módulos oferecem encapsulamento.
+
+Não é exclusivo de orientação a objetos.
+
 ---
 
 # 15 - Anti-patterns reais
+
+Anti-pattern = solução comum que parece boa, mas gera problemas reais.
+
+### 1 - God module
+
+Um módulo gigante que faz tudo.
+
+Exemplo:
+```js
+UserManager.js
+```
+
+Com:
+- login
+- cadastro
+- email
+- banco
+- relatórios
+- permissões
+Problema:
+- impossível manter
+- alto acoplamento
+- difícil de testar
+
+### 2 - Utils gigante
+
+```js
+utils.js
+```
+
+com 300 funções.
+
+Problema:
+vira lixeira de código, um arquivo que colocamos qualquer função que não encontramos lugar específico.
+
+### 3 - Helpers genéricos
+
+```js
+helpers.js
+common.js
+misc.js
+```
+
+Nomes vagos.
+Problema: 
+- Nínguem sabe responsabilidade real.
+
+### 4 - [Dependências circulares](#9---erros-comuns)
+
+### 5 - [Abstrações prematuras](#9---erros-comuns)
+
+### 6 - Barrel file em excesso
+
+Criar: 
+```
+index.js
+```
+para tudo.
+
+Problemas: 
+- dependências circulares
+- imports desnecessários
+- bundle pior
+
+### 7 - Vazar implementação interna
+
+Exemplo:
+```js
+export function validarCPFInternamente() {}
+```
+
+Mesmo sendo detalhe privado.
+
+Problema:
+- outros módulos passam a depender disso.
+
+Depois fica difícil refatorar.
+
+### 8 - Módulos acoplados demais
+
+```js
+PedidoService cria EmailService cria PDFService cria Logger
+```
+
+Problema:
+- efeito dominó em mudanças
+
+### 9 - Arquitetura astronauta
+
+Overengineering.
+
+Criar:
+- factories
+- strategies
+- adapters
+- builders
+
+sem necessidade real.
+
+Problema:
+
+código difícil de entender.
+
+### Regra prática
+Se sua modularização:
+- aumentou complexidade
+- dificultou entendimento
+- dificultou manutenção
+
+provavelmente foi mal aplicada. 
