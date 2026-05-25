@@ -268,3 +268,86 @@ GET normalmente não tem body.
 ---
 
 # 11 - JSON
+
+JSON significa `JavaScript Object Notation`
+
+É um formato de dados muito usado em APIs.`
+
+Exemplo:
+```json
+{
+    "id": 1,
+    "name": "Produto X",
+    "price": 99.90,
+    "active": true
+}
+```
+
+JSON é leve, fácil de ler e funciona bem entre linguagens.
+
+Mesmo tendo "JavaScript" no nome, não é exclusivo do JavaScript.
+
+APIs feitas em C#, Java, PHP, Python, Node.js e várias outras linguagens podem usar JSON normalmente.
+
+# 12 - Exemplos de resposta
+
+> <span style="color: #64ac6e;">Sucesso:</span>
+
+```http
+GET /users/1
+```
+
+Resposta:
+
+```json
+{
+    "id": 1,
+    "name": "Ana",
+    "email": "ana@email.com"
+}
+```
+
+Status:
+
+```http
+200 ok
+```
+
+> <span style="color: #bd5353;">Erro:</span>
+
+```http
+POST /users
+```
+
+Body inválido:
+
+```json
+{
+    "name": "",
+    "email": "email-invalido"
+}
+```
+
+Resposta:
+
+```json
+{
+    "message": "Dados inválidos.",
+    "errors": {
+        "name": ["O nome é obrigatório"],
+        "email": ["O email informado é inválido"]
+    }
+}
+```
+
+*Nesse caso, as variáveis dentro do objeto error estão em arrays para exemplificar que pode haver mais de um erro para cada campo.*
+
+Status:
+
+```http
+400 Bad Request
+```
+
+# 13 - Stateless
+
+Uma REST API deve ser stateless, isso significa que cada requisição deve conter todas as informações necessárias para ser processada.
