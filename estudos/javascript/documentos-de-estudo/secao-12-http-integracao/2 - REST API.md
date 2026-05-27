@@ -350,4 +350,21 @@ Status:
 
 # 13 - Stateless
 
-Uma REST API deve ser stateless, isso significa que cada requisição deve conter todas as informações necessárias para ser processada.
+Uma REST API deve ser stateless.
+
+Isso significa que cada requisição deve conter todas as informações necessárias para ser processada.
+
+A API não deve depender de uma requisição anterior para entender a atual.
+
+Exemplo:
+
+```http
+GET /profile
+Authorization: Bearer token_aqui
+```
+
+O servidor usa o token para identificar o usuário.
+
+Ele não deve depender de uma "memória" da requisição anterior.
+
+Isso ajuda a API a ser mais escalável e previsível.
