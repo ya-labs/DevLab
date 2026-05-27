@@ -313,7 +313,7 @@ Resposta:
 Status:
 
 ```http
-200 ok
+200 OK
 ```
 
 > <span style="color: #bd5353;">Erro:</span>
@@ -577,3 +577,136 @@ O importante é manter um padrão claro.
 - documentar a API;
 - manter nomes consistentes;
 
+# 20 - Exemplo completo de CRUD
+
+CRUD = `Create, Read, Update, Delete`
+
+Em português: `Criar, Ler, Atualizar, Deletar`
+
+Recurso: produtos.
+
+> <span style="color: white; font-weight: bold;">Criar produto:</span>
+
+```http
+POST /products
+```
+
+Body:
+
+```json
+{
+    "name": "Mouser Gamer",
+    "price": 149.90
+}
+```
+
+Resposta:
+
+```http
+201 Created
+```
+```json
+{
+    "id": 1,
+    "name": "Mouser Gamer",
+    "price": 149.90
+}
+```
+
+> <span style="color: white; font-weight: bold;">Buscar produto por ID</span>
+
+```http
+GET /products/1
+```
+
+Resposta:
+
+```http
+200 OK
+```
+```json
+{
+    "id": 1,
+    "name": "Mouser Gamer",
+    "price": 149.90
+}
+```
+
+> <span style="color: white; font-weight: bold;">Atualizar produto:</span>
+
+```http
+PUT /products/1
+```
+
+Body:
+
+```json
+{
+    "name": "Mouser Gamer RGB",
+    "price": 179.90
+}
+``` 
+
+Resposta:
+
+```http
+200 OK
+```
+```json
+{
+    "id": 1,
+    "name": "Mouser Gamer RGB",
+    "price": 179.90
+}
+```
+
+> <span style="color: white; font-weight: bold;">Remover produto:</span>
+
+```http
+DELETE /products/1
+```
+
+Resposta:
+
+```http
+204 No Content
+```
+
+# 21 - REST API no front-end
+
+Consumimos uma REST API fazendo requisições HTTP.
+
+Exemplo com [fetch](./1%20-%20Fetch%20API.md):
+
+```javascript
+fetch("https://api.exemplo.com/users")
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.log("Erro ao buscar usuários:", error);
+    });
+```
+
+Com [async/await](../secao-08-assincronismo/1%20-%20Promises%20e%20async.md):
+
+```javascript
+async function carregarUsuarios() {
+    try {
+        const response = await fetch("https://api.exemplo.com/users");
+
+        if (!response.ok) { // valida se a resposta foi bem-sucedida
+            throw new Error("Erro ao buscar usuários.");
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+carregarUsuarios();
+```
