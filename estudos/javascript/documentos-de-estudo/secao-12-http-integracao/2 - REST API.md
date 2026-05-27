@@ -1,4 +1,5 @@
 ## 1 - O que é uma API?
+## 1 - O que é uma API?
 
 API significa Application Programming Interface.
 De forma simples, é uma forma de comunicação entre sistemas.
@@ -45,7 +46,7 @@ Cada recurso representa algo importante do sistema.
 
 ## 3 - O que é uma REST API?
 
-Uma REST API é uma API construída seguindo os princípios REST.
+É uma API construída seguindo os princípios REST.
 Ela permite que sistemas conversem usando requisições HTTP.
 
 Exemplo:
@@ -269,7 +270,7 @@ GET normalmente não tem body.
 
 # 11 - JSON
 
-JSON significa `JavaScript Object Notation`
+Significa `JavaScript Object Notation`
 
 É um formato de dados muito usado em APIs.`
 
@@ -288,6 +289,8 @@ JSON é leve, fácil de ler e funciona bem entre linguagens.
 Mesmo tendo "JavaScript" no nome, não é exclusivo do JavaScript.
 
 APIs feitas em C#, Java, PHP, Python, Node.js e várias outras linguagens podem usar JSON normalmente.
+
+---
 
 # 12 - Exemplos de resposta
 
@@ -348,6 +351,8 @@ Status:
 400 Bad Request
 ```
 
+---
+
 # 13 - Stateless
 
 Uma REST API deve ser stateless.
@@ -368,3 +373,207 @@ O servidor usa o token para identificar o usuário.
 Ele não deve depender de uma "memória" da requisição anterior.
 
 Isso ajuda a API a ser mais escalável e previsível.
+
+^^^
+
+---
+
+# 14 - Autenticação em REST API
+
+Serve para identificar quem está usando a API.
+
+Um fluxo comum é:
+
+1 - Usuário faz login
+2 - API valida e-mail e senha
+3 - API retorna um token
+4 - Front-end salva o token
+5 - Front-end envia o token nas próximas requisições
+
+Exemplo:
+
+```http
+POST /auth/login
+```
+
+Body:
+
+```json
+{
+    "email": "user@email.com",
+    "password": "123456"
+}
+```
+
+Resposta:
+
+```json
+{
+    "token": "token_aqui"
+}
+```
+
+Depois:
+
+```http
+GET /profile
+Authorization: Bearer token_aqui
+```
+
+---
+
+# 15 - Autorização
+
+Autenticação != autorização.
+
+Autenticação:
+
+- Quem é você?
+
+Autorização:
+
+- Você pode fazer isso?
+
+Exemplo:
+
+Um usuário logado pode acessar o próprio perfil.
+
+Mas apenas administradores possam excluir usuários.
+
+```http
+DELETE /users/10
+Authorization: Bearer token_aqui
+```
+
+Se o usuário não tiver permissão:
+
+```http 
+403 Forbidden
+```
+
+---
+
+# 16 - CORS
+
+Significa Cross-Origin Resource Sharing.
+
+Ele define quais origens podem acessar a API pelo navegador.
+
+Exemplo:
+
+Front-end:
+
+`http://localhost:3000`
+
+Back-end:
+
+`http://localhost:5000`
+
+Mesmo estando na mesma máquina, são `origens diferentes` por causa da porta.
+
+Se a API não permitir essa origem, o navegador bloqueia a requisição.
+
+> <span style="color: white; font-weight: bold;">Importante:</span>
+
+CORS é uma política de segurança do navegador.
+
+Ferramentas como Postman ou Insomnia não sofrem bloqueio de CORS.
+
+---
+
+# 17 - Paginação
+
+Serve para dividir uma lista grande de recursos em partes menores, evitando retornar dados demais de uma vez.
+
+> <span style="color: #bd5353; font-weight: bold;">Exemplo negativo:</span>
+
+```http
+GET /products
+```
+
+Se existirem 100 mil produtos, retornar tudo em uma única requisição pode travar ou deixar a API lenta.
+
+> <span style="color: #64ac6e; font-weight: bold;">Exemplo positivo:</span>
+
+```http
+GET /products?page=1&limit=20
+```
+
+Isso retorna apenas os 20 primeiros produtos.
+
+Resposta:
+
+```json
+{
+    "data": [
+        { "id": 1, "name": "Produto 1" },
+        { "id": 2, "name": "Produto 2" },
+        ...
+    ],
+    "meta": {
+        "total": 100000,
+        "page": 1,
+        "limit": 20,
+        "totalPages": 5000
+    }
+}
+```
+
+Nesse caso, a resposta inclui um objeto `meta` com informações sobre a paginação, como o total de itens, a página atual, o limite por página e o total de páginas.
+
+O objeto `data` contém a lista de produtos retornados.
+
+---
+
+# 18 - Filtros e ordenação
+
+APIs geralmente permitem filtros.
+
+Exemplo:
+
+```http
+GET /products?category=keyboard
+```
+
+Também pode permitir ordenação:
+
+```http
+GET /products?sort=price_desc
+```
+
+Ou ordem decrescente:
+
+```http
+GET /products?sort=price_asc
+```
+
+Ou
+
+```http
+GET /products?sort=-price
+```
+
+Ou 
+
+```http
+GET /products?sortBy=price&order=desc
+```
+
+O importante é manter um padrão claro.
+
+> *Esses exemplos de nomenclaturas não são universais, mas sim padrões comuns utilizados em APIs REST.*
+
+# 19 - Boas práticas em REST API
+
+- usar nome de recursos no plural;
+- usar métodos HTTP corretamente;
+- retornar status codes adequados;
+- não colocar ações desnecessárias nas URLs;
+- validar dados recebidos;
+- padronizar respostas de erro;
+- usar paginação em listas grandes;
+- proteger rotas privadas;
+- não expor detalhes internos em erros;
+- documentar a API;
+- manter nomes consistentes;
+
