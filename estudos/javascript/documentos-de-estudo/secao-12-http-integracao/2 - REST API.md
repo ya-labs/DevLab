@@ -713,7 +713,8 @@ carregarUsuarios();
 
 ---
 
-# (EXTRA) - Back-end
+# (EXTRA) - Como é construída uma REST API no Back-end?
+
 ### 22 - REST API no back-end
 
 Em um back-end, podemos criar uma REST API usando frameworks como Express (Node.js), Django (Python), Spring Boot (Java), Laravel (PHP) e muitos outros.
@@ -776,3 +777,368 @@ app.get("/users/:id", (req, res) => {
     }
 });
 ```
+
+O controller não deve concentrar toda a regra de negócio.
+
+Ele deve ser uma entrada para a aplicação.
+
+### 24 - Services
+
+É onde normalmente ficam as regras de negócio.
+
+Exemplo:
+
+Antes de criar um usuário, o sistema pode precisar:
+
+- validar se o e-mail já existe;
+- criptografar senha;
+- definir permissões iniciais;
+- enviar evento de cadastro.
+
+Fluxo melhor:
+```
+Controller chama Service
+Service executa regra
+Service chama Repository
+Repository acessa banco de dados
+```
+
+### 25 - Repository
+
+É a camada responsável por acessar o banco de dados.
+
+Ele pode buscar, criar, atualizar ou remover informações no banco.
+
+Exemplo conceitual:
+
+```javascript
+UserRepository.findById(userId);
+UserRepository.create({ name, email, password });
+UserRepository.update(userId, { name, email });
+UserRepository.delete(userId);
+```
+
+O Repository é uma abstração para o banco de dados, permitindo trocar a implementação sem afetar as camadas superiores.
+
+### 26 - DTO
+
+Significa Data Transfer Object.
+
+É um objeto usado para transportar dados entre camadas ou entre cliente e servidor.
+
+Exemplo:
+
+```json
+{
+    "name": "Nícolas",
+    "email": "nicolas@example.com",
+    "password": "123456"
+}
+```
+
+Esse pode ser um DTO de criação de usuário.
+
+Por que usar DTO?
+
+Porque nem sempre o formato recebido pela API é igual ao formato salvo no banco.
+
+Exemplo:
+
+A API recebe:
+
+```json
+{
+    "name": "Nícolas",
+    "email": "nicolas@email.com",
+    "password": "123456"
+}
+```
+
+Mas o banco salva:
+
+```json
+{
+    "id": 1,
+    "name": "Nícolas",
+    "email": "nicolas@email.com",
+    "passwordHash": "hash_da_senha",
+    "createdAt": "2024-06-01T12:00:00Z"
+}
+```
+
+DTO ajuda a separar entrada, saída e entidade interna.
+
+### 27 - Entidade
+
+Entidade representa algo importante dentro do domínio da aplicação.
+
+Exemplo de entidade usuário:
+
+```json
+{
+    "id": 1,
+    "name": "Nícolas",
+    "email": "nicolas@email.com",
+    "passwordHash": "hash_da_senha",
+    "createdAt": "2024-06-01T12:00:00Z"
+}
+```
+
+Essa entidade representa um usuário dentro do sistema.
+
+Cuidado:
+
+Nem tudo que existe na entidade deve ser retornado pela API.
+
+> <span style="color: #bd5353;">Exemplo negativo</span>:
+
+```json
+{
+    "id": 1,
+    "name": "Nícolas",
+    "email": "nicolas@email.com",
+    "passwordHash": "hash_da_senha",
+}
+```
+
+Nunca retorne senha ou hash de senha em respostas da API.
+
+### 28 - Validação 
+
+Toda API deve validar os dados recebidos.
+
+Exemplo:
+
+```json
+{
+    "name": "",
+    "email": "abc"
+    "password": "123"
+}
+```
+
+Problemas:
+
+- O nome está vazio;
+- O email é inválido;
+- A senha é muito fraca.
+
+Resposta possível:
+
+```json
+{
+    "message": "Dados inválidos.",
+    "errors": {
+        "name": ["O nome é obrigatório."],
+        "email": ["O email informado é inválido."],
+        "password": ["A senha deve conter pelo menos 6 caracteres."]
+    }
+}
+```
+
+Validação é obrigação do back-end.
+
+O front-end pode ajudar a evitar erros, mas o back-end deve garantir a integridade dos dados.
+
+Exemplo de validação no front-end:
+
+```javascript
+function validarFormulario(data) {
+    const errors = {};
+
+    if (!data.name) {
+        errors.name = "O nome é obrigatório.";
+    }
+
+    if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
+        errors.email = "O email informado é inválido.";
+    }
+
+    if (!data.password || data.password.length < 6) {
+        errors.password = "A senha deve conter pelo menos 6 caracteres.";
+    }
+
+    return errors;
+}
+```
+
+### 29 - Segurança básica
+
+Pontos importantes:
+- usar HTTPS;
+- validar tudo que entra;
+- autenticar rotas privadas;
+- verificar permissões;
+- não expor dados sensíveis;
+- não retornar detalhes técnicos em erros;
+- limitar tamanho de payloads;
+- aplicar rate limit em rotas sensíveis;
+- proteger contra SQL injection;
+- proteger tokens e senhas;
+
+> <span style="color: #bd5353;">Exemplo negativo de erro:</span>
+
+```json
+{
+    "message": "SqlException: erro na tabela users linha 45..."
+}
+```
+
+> <span style="color: #64ac6e;">Exemplo positivo de erro:</span>
+
+```json
+{
+    "message": "Ocorreu um erro ao processar sua requisição. Tente novamente mais tarde."
+}
+```
+
+### 30 - Rate limit
+
+Rate limit limita a quantidade de requisições em determinado período.
+
+Exemplo:
+
+`Máximo de 100 requisições por minuto por usuário`
+
+Isso ajuda a evitar:
+- abuso;
+- ataques;
+- consumo exagerado de recursos;
+- força bruta em login;
+
+Se o limite for excedido, a API pode retornar:
+
+```http
+429 Too Many Requests
+```
+
+---
+
+# 31 - Documentação de API
+
+APIs precisam ser documentadas.
+
+A documentação deve mostrar:
+
+- rotas disponíveis;
+- métodos HTTP;
+- parâmetros de rota;
+- body esperado;
+- respostas possíveis;
+- status codes;
+- autenticação necessária;
+
+Ferramentas comuns:
+```
+Swagger -> visualização de documentação interativa
+OpenAPI -> formato de especificação de API
+Postman, Insomnia -> teste e documentação de API
+```
+
+Exemplo de documentação simples:
+
+```
+POST /users
+
+Descrição: 
+Cria um novo usuário.
+
+Body:
+{
+    "name": "string",
+    "email": "string",
+    "password": "string"
+}
+
+Respostas: 
+201 Created
+400 Bad Request
+409 Conflict
+```
+
+# 32 - Exemplo de contrato entre front-end e back-end
+
+Um contrato define como a API deve funcionar.
+
+Exemplo:
+Contrato para criação de usuário:
+
+```
+GET /matches/{id}
+```
+
+Resposta:
+
+```json
+{
+    "id": 123,
+    "playerName": "Nícolas",
+    "championName": "Zed",
+    "kills": 10,
+    "deaths": 2,
+    "assists": 5,
+    "totalDamage": 32000
+}
+```
+
+O front-end depende desse formato.
+
+Se o back-end muda `championName` para `champion`, o front pode quebrar.
+
+Por isso, APIs precisam de consistência e comunicação entre quem faz o back e quem faz o front.
+
+# 33 - Versionamento de API
+
+Versionar a API é importante para evitar que mudanças quebrem clientes existentes.
+
+Exemplo de versionamento na URL:
+
+```
+GET /v1/users
+```
+
+Exemplo de versionamento no header:
+
+```
+GET /users
+Accept: application/vnd.myapi.v1+json
+```
+
+Quando for necessário fazer mudanças que não são compatíveis com versões anteriores, podemos criar uma nova versão da API.
+
+Versões diferentes podem coexistir, permitindo que clientes antigos continuem funcionando enquanto os novos podem usar as melhorias da nova versão.
+
+# 34 - Exemplo prático com front-end
+
+```js
+async function buscarPartida(id) {
+    try {
+        const response = await fetch(`https://api.exemplo.com/matches/${id}`);
+
+        if (!response.ok) {
+            throw new Error("Erro ao buscar partida.");
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+buscarPartida(123);
+```
+
+# 34 - Checklist de uma boa REST API
+
+- rotas claras
+- métodos HTTP corretos
+- status code adequados
+- respostas padronizadas
+- validação de dados
+- autenticação, versionamento e autorização quando necessário
+- paginação em listas grandes
+- documentação
+- tratamento de erros
+- segurança básica
