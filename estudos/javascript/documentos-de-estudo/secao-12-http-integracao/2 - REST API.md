@@ -1,5 +1,4 @@
 ## 1 - O que é uma API?
-## 1 - O que é uma API?
 
 API significa Application Programming Interface.
 De forma simples, é uma forma de comunicação entre sistemas.
@@ -121,7 +120,7 @@ Recebe um body com os dados do usuário que será criado:
 ```json
 {
   "name": "Nícolas",
-  "email": "
+  "email": "nicolas@email.com"
 }
 ```
 
@@ -203,7 +202,7 @@ Geralmente, usamos nomes no plural para os recursos:
 
 # 8 - Parâmetros de rota
 
-São usados para identifacr recursos específicos.
+São usados para identificar recursos específicos.
 
 Exemplo:
 ```http
@@ -374,7 +373,7 @@ Ele não deve depender de uma "memória" da requisição anterior.
 
 Isso ajuda a API a ser mais escalável e previsível.
 
-^^^
+
 
 ---
 
@@ -541,7 +540,7 @@ Também pode permitir ordenação:
 GET /products?sort=price_desc
 ```
 
-Ou ordem decrescente:
+Ou ordem crescente:
 
 ```http
 GET /products?sort=price_asc
@@ -912,7 +911,7 @@ Exemplo:
 ```json
 {
     "name": "",
-    "email": "abc"
+    "email": "abc",
     "password": "123"
 }
 ```
@@ -1061,7 +1060,7 @@ Respostas:
 Um contrato define como a API deve funcionar.
 
 Exemplo:
-Contrato para criação de usuário:
+Contrato para buscar uma partida:
 
 ```
 GET /matches/{id}
@@ -1130,7 +1129,7 @@ async function buscarPartida(id) {
 buscarPartida(123);
 ```
 
-# 34 - Checklist de uma boa REST API
+# 35 - Checklist de uma boa REST API
 
 - rotas claras
 - métodos HTTP corretos
