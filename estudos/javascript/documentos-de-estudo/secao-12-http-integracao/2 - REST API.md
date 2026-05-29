@@ -710,3 +710,69 @@ async function carregarUsuarios() {
 
 carregarUsuarios();
 ```
+
+---
+
+# (EXTRA) - Back-end
+### 22 - REST API no back-end
+
+Em um back-end, podemos criar uma REST API usando frameworks como Express (Node.js), Django (Python), Spring Boot (Java), Laravel (PHP) e muitos outros.
+
+Mapeamos rotas que recebem requisições e retornam respostas.
+
+Exemplo conceitual:
+
+```
+GET /users → buscar usuários
+POST /users → criar usuário
+GET /users/:id → buscar usuário por ID
+PUT /users/:id → atualizar usuário
+DELETE /users/:id → remover usuário
+```
+
+Cada rota normalmente chama alguma camada do sistema.
+
+Exemplo de fluxo:
+
+```
+Controller -> Service -> Repository -> Banco de dados
+```
+
+Controller recebe a requisição.
+
+Service aplica regras de negócio.
+
+Repository faz a comunicação com o banco de dados.
+
+### 23 - Controllers
+
+É a camada que lida diretamente com a requisição HTTP.
+
+Ele recebe:
+
+- parâmetros de rota;
+- query parameters;
+- body;
+- headers;
+- usuário autenticado
+
+E retorna:
+
+- status code;
+- dados;
+- mensagem de erro;
+
+Exemplo de controller em Express:
+
+```javascript
+app.get("/users/:id", (req, res) => {
+    const userId = req.params.id;
+    // lógica para buscar usuário no banco de dados
+    const user = findUserById(userId);
+    if (user) {
+        res.status(200).json(user);
+    } else {
+        res.status(404).json({ message: "Usuário não encontrado." });
+    }
+});
+```
