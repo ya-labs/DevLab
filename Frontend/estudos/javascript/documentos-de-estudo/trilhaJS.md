@@ -232,10 +232,36 @@ Onde encontrar cada conteúdo desse diretório:
 - Resumo final
 
 ## !. 2 - REST API.md
-(a fazer)
+- O que é API
+- O que é REST
+- Recursos
+- Métodos HTTP
+- URLs em REST
+- Parâmetros de rota
+- Query parameters
+- Body da requisição
+- JSON
+- Exemplos de resposta
+- Stateless
+- Autenticação e autorização
+- CORS
+- Paginação, filtros e ordenação
+- Boas práticas
+- Exemplo de CRUD
+- Contrato entre front-end e back-end
+- Versionamento de API
 
 ## !. 3 - Status HTTP.md
-(a fazer)
+- O que é Status HTTP
+- Por que Status HTTP existe
+- Famílias de status HTTP
+- Status 2xx
+- Status 3xx
+- Status 4xx
+- Status 5xx
+- Status HTTP com Fetch API
+- Tratamento por status
+- Boas práticas
 
 ## !. 4 - Headers HTTP.md
 (a fazer)
@@ -252,25 +278,19 @@ Onde encontrar cada conteúdo desse diretório:
 ## !. 8 - Interceptação de Requests.md
 (a fazer)
 
-## !. 9 - Tratamento de Erros HTTP.md
+## !. 9 - Cookies, Sessão e Credentials.md
 (a fazer)
 
-## !. 10 - Consumo de APIs no AngularJS.md
+## !. 10 - Query Params e URLSearchParams.md
 (a fazer)
 
-## !. 11 - Cookies, Sessão e Credentials.md
+## !. 11 - Paginação, Filtros e Ordenação.md
 (a fazer)
 
-## !. 12 - Query Params e URLSearchParams.md
+## !. 12 - Retry, Timeout e Cancelamento.md
 (a fazer)
 
-## !. 13 - Paginação, Filtros e Ordenação.md
-(a fazer)
-
-## !. 14 - Retry, Timeout e Cancelamento.md
-(a fazer)
-
-## !. 15 - Performance e Boas Práticas.md
+## !. 13 - Performance e Boas Práticas.md
 (a fazer)
 
 # ordem recomendada de estudo
