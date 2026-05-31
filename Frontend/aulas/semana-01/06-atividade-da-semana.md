@@ -8,7 +8,7 @@ O objetivo é perceber como você interpreta conceitos, organiza ideias e explic
 
 ## Exercício de lógica
 
-Faça a primeira lista de apoio:
+Faça a primeira lista de apoio, seção 1 - primeiros algoritmos:
 
 - [Lista 01 - Lógica básica](../../exercicios/javascript/listas-questoes/secao-00-primeiros-passos-programacao/lista-01-logica-basica.md)
 
