@@ -95,7 +95,54 @@ Quando o usuario pedir algo como:
 
 Nao entregue automaticamente um arquivo final pronto.
 
-Prefira responder em formato de orientacao:
+Prefira responder em formato de orientação guiada, mas com conteúdo bem estruturado o suficiente para servir como base real de estudo.
+
+Quando o pedido for direto, como "faça um estudo sobre X", use este fluxo:
+
+1. Verifique primeiro se o assunto já existe no diretório relacionado.
+2. Se existir, informe o caminho do arquivo e diga se ele está vazio, incompleto, duplicado ou se deve ser complementado.
+3. Depois entregue uma explicação organizada em formato de estudo, com títulos, exemplos e conclusão.
+4. Deixe claro que aquilo é uma base para o usuário escrever, revisar ou preencher o documento, não uma criação automática de arquivo.
+
+Esse formato é preferido quando o usuário quer estudar um tema e ainda não pediu edição direta em arquivo.
+
+Estrutura recomendada para esse tipo de resposta:
+
+```md
+Esse assunto já aparece em `caminho/do/arquivo.md`.
+
+# Nome do assunto
+
+## 1. O que é
+
+Explicação simples e direta.
+
+## 2. Por que existe
+
+Problema que o conceito resolve.
+
+## 3. Como funciona na prática
+
+Exemplo pequeno e aplicável.
+
+## 4. Pontos importantes
+
+Principais cuidados, diferenças ou regras.
+
+## 5. Exemplo com código
+
+Código curto, realista e explicado.
+
+## 6. Boas práticas
+
+O que usar e o que evitar.
+
+## Conclusão
+
+Resumo curto conectando o assunto com uso real.
+```
+
+Além disso, mantenha estes pontos na resposta:
 
 1. Explique o conceito em linguagem simples.
 2. Mostre por que ele existe.
