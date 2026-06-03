@@ -181,6 +181,30 @@ Evite transformar cada topico em um livro sem necessidade. Porem, por padrao, o 
 
 Quando o usuario pedir "bem basico", "resumido", "so a base" ou algo parecido, trate isso como uma decisao especifica daquele documento, nao como regra geral para todos os estudos.
 
+## Padrão Atual Para Atualização De Documentos
+
+Quando o usuário pedir para atualizar, revisar ou modernizar documentos antigos de estudo, use como referência principal o padrão mais atual observado na seção HTTP:
+
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/1 - Fetch API.md`;
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/2 - REST API.md`;
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/3 - Status HTTP.md`;
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/4 - Headers HTTP.md`.
+
+Esses documentos representam melhor o formato atual esperado para estudos: explicação progressiva, foco em uso real, exemplos práticos, relação com outros conceitos da trilha, cuidados comuns e conclusão objetiva.
+
+Ao atualizar documentos antigos, preserve o conteúdo correto que já existe, mas ajuste a organização, clareza, profundidade e exemplos para ficar mais próximo desse padrão. Não transforme a atualização em reescrita completa se uma revisão bem feita resolver.
+
+Antes de atualizar qualquer documento, compare com esses modelos recentes e identifique:
+
+- o que está correto e deve ser mantido;
+- o que está raso demais e precisa ser aprofundado;
+- o que está redundante com outro arquivo da trilha;
+- o que precisa de exemplo prático;
+- o que precisa de melhor organização;
+- quais referências a outros documentos devem ser adicionadas.
+
+Se o usuário pedir para atualizar vários documentos, siga o padrão atual sem criar arquivos novos desnecessários e sem duplicar conteúdos que já existem em outro ponto da trilha.
+
 ## Profundidade Ideal
 
 Use profundidade progressiva e adequada ao objetivo do documento.
