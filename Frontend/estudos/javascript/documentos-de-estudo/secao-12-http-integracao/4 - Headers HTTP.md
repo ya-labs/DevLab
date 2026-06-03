@@ -2,7 +2,7 @@
 
 Informações extras enviadas junto com uma requisição ou resposta HTTP.
 
-Eles não representam o conteúdo principal da resposta. Eles funcionam como `Metadados`, ou seja, informações sobre a comunicação.
+Eles não representam o conteúdo principal da resposta. Eles funcionam como `metadados`, ou seja, informações sobre a comunicação.
 
 Quando o front-end faz uma requisição para uma API, a comunicação normalmente possui:
 - método HTTP;
@@ -136,7 +136,7 @@ No front-end:
 ```js
 const response = await fetch("/api/produtos", {
     headers: {
-        accept: "application/json"
+        Accept: "application/json"
     }
 });
 ```
@@ -173,7 +173,7 @@ async function buscarPerfil (token) {
         throw new Error("Erro ao buscar perfil");
     }
 
-    return await response.json();
+    return response.json();
 }
 ```
 
@@ -257,27 +257,73 @@ Isso é útil quando você precisa verificar o tipo de conteúdo retornado pela 
 # 6 - Exemplo prático completo
 
 ```js
-async function criarProduto (token) {
-    const response = await fetch("/api/produtos", {
-        method: "POST",
+async function buscarPerfil (token) {
+    const response = await fetch("/api/perfil", {
+        method: "GET",
         headers: {
-            "Content-Type": "application/json",
             Accept: "application/json",
             Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            nome: "Notebook",
-            preco: 3500
-        })
+        }
     });
 
     if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
+        throw new Error("Erro ao buscar perfil");
     }
 
-    return await response.json();
+    const contentType = response.headers.get("Content-Type");
+
+    if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Resposta não está no formato JSON");
+    }
+
+    return response.json();
 }
 ```
 
-Nesse exemplo:
-- ``
+O que acontece nesse código:
+- `Accept` informa que o front-end espera JSON;
+- `Authorization` envia o token do usuário;
+- `response.ok` valida se o status está entre 200 e 299;
+- `response.headers.get("Content-Type")` lê um header da resposta;
+- a validação evita tentar tratar como JSON uma resposta que não é JSON.
+
+---
+
+# 7 - Erros comuns
+
+### Enviar `body` JSON sem `Content-Type`.
+
+```js
+await fetch("/api/usuarios", {
+    method: "POST",
+    body: JSON.stringify({ nome: "Ana" })
+});
+```
+
+- O problema é que a API pode não entender corretamente o formato do corpo.
+
+### Confundir Content-Type com Accept.
+- Content-Type: formato do conteúdo que está sendo enviado.
+- Accept: formato do conteúdo que o cliente aceita receber.
+
+### Esquecer de incluir o token no header Authorization.
+
+- Sem o token, a API pode retornar um erro de autenticação.
+
+### Não verificar os headers da resposta.
+
+- Nem toda resposta é JSON. Se a API retornar um erro em HTML, tentar ler como JSON causará um erro.
+
+---
+
+# 8 - Relação com outros estudos
+
+Antes desse assunto, vale revisar [1 - Fetch API.md](./1%20-%20Fetch%20API.md), porque é onde os headers aparecem no uso prático com `fetch`.
+
+Esse conteúdo também se conecta com [2 - REST API.md](./2%20-%20REST%20API.md), principalmente em autenticação, stateless e contrato entre front-end e back-end.
+
+Depois, ele prepara terreno para [5 - Autenticacao e JWT.md](./5%20-%20Autenticacao%20e%20JWT.md) e [6 - CORS.md](./6%20-%20CORS.md).
+
+# 9 - Conclusão
+
+Headers HTTP são metadados que ajudam cliente e servidor a se comunicarem com mais contexto. No front-end, os mais importantes no começo são `Content-Type`, `Accept` e `Authorization`.
