@@ -1,200 +1,250 @@
-## O que e ESM
+# ES6 Modules
 
-    ```js
-ES6 Modules (ou ESM) é o sistema nativo de módulos do JavaScript, lançado em junho de 2015.
+ES6 Modules, também chamados de ESM, são o sistema nativo de módulos do JavaScript.
 
--> é uma forma de dividir seu código em arquivos separados e conseguir importar/exportar coisas entre eles.
+Eles permitem dividir o código em arquivos separados e compartilhar funções, objetos, constantes e classes entre esses arquivos usando `export` e `import`.
 
-Antes do ES6, a gente tinha que usar bibliotecas externas (ex: CommonJS, AMD) para conseguir modularizar o código.
--> tudo no mesmo arquivo era bagunçado, difícil de manter e reutilizar.
--> ou usando gambiarra tipo IIFE, global (variáveis globais).
+---
 
-Hoje com ES6 Modules:
--> código organizado
--> reutilizável
--> escalável (padrão de mercado)
+# 1 - Por que módulos existem
 
-Por que isso é importante?
--> frameworks usam isso (React, Angular, etc)
--> separa responsabilidades
--> melhora manutenção
--> permite tree-shaking (performance)
--> evita poluição global
+Sem módulos, projetos grandes ficariam concentrados em poucos arquivos ou dependeriam de variáveis globais.
 
-# ______________________________________________________________________________________________
+Isso causa problemas como:
 
-# . 1 - Estrutura básica
+- código difícil de manter;
+- nomes em conflito;
+- baixa reutilização;
+- responsabilidades misturadas;
+- dificuldade para testar;
+- dificuldade para entender dependências.
 
-Você tem arquivos separados:
-/ projeto
-|-- main.js
-|-- utils.js
+Módulos resolvem isso permitindo separar o código por responsabilidade.
 
-## 1 - Export (exportar coisas)
+---
 
-No arquivo utils.js:
+# 2 - Exportando e importando
 
+Arquivo `math.js`:
+
+```js
 export function somar(a, b) {
     return a + b;
 }
+```
 
--> Aqui será determinando que essa função pode ser usada fora desse arquivo.
+Arquivo `main.js`:
 
-## 2 - Import (importar coisas)
+```js
+import { somar } from "./math.js";
 
-No main.js:
-import { somar } from './utils.js';
+console.log(somar(2, 3)); // 5
+```
 
-console.log(somar(2,3));
+O `export` torna a função disponível para outros arquivos.
 
--> Aqui você está puxando algo de outro arquivo
+O `import` traz a função para o arquivo atual.
 
-# ______________________________________________________________________________________________
+---
 
-# . 2 - Tipos de export 
-## 1 - Name export (mais comum)
+# 3 - Named export
 
-Você pode exportar várias coisas:
+Named export permite exportar várias coisas no mesmo arquivo.
 
+```js
 export const PI = 3.14;
 
-export function multiplicar(a,b) {
+export function multiplicar(a, b) {
     return a * b;
 }
+```
 
 Importando:
 
-import { PI, multiplicar } from './utils.js';
+```js
+import { PI, multiplicar } from "./math.js";
+```
 
-## 2 - Default export (export padrão)
+Esse é um padrão muito comum porque deixa explícito o que está sendo importado.
 
-SÓ pode ter UM por arquivo:
+---
 
-export default function saudacao() {
-    console.log("Olá");
+# 4 - Default export
+
+Default export permite exportar um valor principal do arquivo.
+
+```js
+export default function formatarNome(nome) {
+    return nome.trim();
 }
+```
 
-importando:
+Importando:
 
-import saudacao from './utils.js';
+```js
+import formatarNome from "./formatarNome.js";
+```
 
--> Aqui é possível dar qualquer nome na importação.
+O nome na importação pode ser escolhido livremente.
 
-## 3 - Misturando default export com name export
+```js
+import qualquerNome from "./formatarNome.js";
+```
 
-export const nome = "Nicolas";
+Por isso, em muitos times, named export é preferido para evitar confusão em refactors.
 
-export default function teste() {}
+---
 
-importando:
+# 5 - Misturando default e named export
 
-import teste, { nome } from './utils.js';
+É possível misturar, mas use com cuidado.
 
-# ______________________________________________________________________________________________
+```js
+export const LIMITE = 10;
 
-# . 3 - Como isso funciona
+export default function listarUsuarios() {
+    return [];
+}
+```
 
-## 1 - No navegador:
+Importando:
 
-É necessário usar:
-<script type="module" src="main.js"></script>
+```js
+import listarUsuarios, { LIMITE } from "./usuarios.js";
+```
 
-## 2 - Node.js:
+Funciona, mas pode deixar o arquivo menos previsível se usado sem padrão.
 
-No Node moderno:
--> usar "type": "module" no package.json
--> ou usar .mjs
+---
 
-# ______________________________________________________________________________________________
+# 6 - Módulos no navegador
 
-# . 4 - Conceitos importantes
+No navegador, use `type="module"`.
 
-## 1 - Cada arquivo é um módulo
-// qualquer arquivo já é um módulo isolado
--> nada vaza automaticamente pro global, ou seja, o que você define em um arquivo não interfere no outro automaticamente.
+```html
+<script type="module" src="./main.js"></script>
+```
 
-## 2 - Import é estático (importante pra bundlers)
-import { algo } from './arquivo.js';
--> isso é analisado em tempo de compilação, ou seja, o bundler sabe exatamente o que está sendo importado e pode otimizar (tree-shaking).
--> estático quer dizer que não é possível usar variáveis ou condições para importar dinamicamente (isso é possível com import() dinâmico).
--> bundlers são ferramentas que pegam todo o código e transformam em um único arquivo otimizado para produção.
+Com isso:
 
-## 3 - Caminho relativo
-'./arquivo.js'; // mesma pasta
-'../arquivo.js'; // pasta acima
-
-# ______________________________________________________________________________________________
-
-## O que é Tree Shaking:
-
-# . 5 - Tree-shaking
--> é uma técnica de otimização onde o bundler remove código que não está sendo usado (dead code elimination).
--> isso só funciona com ES6 Modules porque o import é estático, ou seja, o bundler sabe exatamente o que está sendo importado e pode eliminar o que não é usado.
--> isso melhora a performance do aplicativo, reduzindo o tamanho do bundle final.
+- o arquivo roda em modo módulo;
+- imports e exports funcionam;
+- o escopo não polui o global automaticamente;
+- o carregamento segue regras modernas do navegador.
 
 Exemplo:
 
-export function somar() {}
-export function multiplicar() {}
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>ES Modules</title>
+</head>
+<body>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
+```
 
-Import:
+---
 
-import { somar } from './math.js';
+# 7 - Módulos em projetos modernos
 
-Build:
+Frameworks e bundlers usam módulos o tempo todo.
 
-multiplicar removido
+Exemplo em React:
 
-Isso reduz tamanho final.
+```js
+import { useState } from "react";
+import { buscarProdutos } from "./services/produtosService.js";
+import ProdutoCard from "./components/ProdutoCard.jsx";
+```
 
-# ______________________________________________________________________________________________
+Na prática, ESM é base para:
 
-# . 6 - Erros comuns
-## 1 - Esquecer de usar a extensão .js
-import { algo } from './arquivo'; // isso pode causar erro dependendo do ambiente
+- React;
+- Vite;
+- Angular moderno;
+- Vue;
+- bibliotecas npm;
+- tree-shaking;
+- organização por arquivos.
 
-## 2 - Misturar default export com name export sem entender a sintaxe
-export default function teste() {}
-export const nome = "Nicolas";
+---
 
-import teste, { nome } from './utils.js'; // isso é correto
-import { teste, nome } from './utils.js'; // isso é incorreto, teste é default export
-import teste from './utils.js'; // isso é correto, mas não importa nome
+# 8 - Exemplo prático completo
 
-## 3 - Não usar type="module" no navegador
-<script src="main.js"></script> // isso não funciona, precisa ser <script type="module" src="main.js"></script>
+`produtosService.js`:
 
-# ______________________________________________________________________________________________
+```js
+export async function buscarProdutos() {
+    const response = await fetch("/api/produtos");
 
-# . 7 - Exemplo real completo
+    if (!response.ok) {
+        throw new Error("Erro ao buscar produtos");
+    }
 
-## 1 - utils.js
-export function formatarNome(nome) {
-    return nome.trim().toUpperCase();
+    return response.json();
+}
+```
+
+`main.js`:
+
+```js
+import { buscarProdutos } from "./produtosService.js";
+
+async function iniciar() {
+    const produtos = await buscarProdutos();
+
+    console.log(produtos);
 }
 
-export const idade = 20;
+iniciar();
+```
 
-## 2 - services.js
-export default function buscarUsuario() {
-    return {
-        nome: "Nicolas",
-    };
-}
+Esse exemplo separa a responsabilidade de buscar dados da responsabilidade de iniciar a aplicação.
 
-## 3 - main.js
-import buscarUsuario from './services.js';
-import { formatarNome, idade } from './utils.js';
+---
 
-const usuario = buscarUsuario();
+# 9 - Erros comuns
 
-console.log(formatarNome(usuario.nome)); // "NICOLAS"
-console.log(idade); // 20
+### Esquecer a extensão no navegador
 
-## 4 - Quando usar o quê?
+```js
+import { somar } from "./math";
+```
 
-- name export -> padrão do mercado, recomendado para a maioria dos casos
-- default export -> quando o módulo tem uma única responsabilidade clara, ou seja, exporta apenas uma coisa (ex: um componente React, uma função utilitária principal, etc)
+No navegador puro, normalmente use:
 
-# ______________________________________________________________________________________________
+```js
+import { somar } from "./math.js";
+```
 
+### Criar dependência circular
+
+Arquivo A importa B, e B importa A.
+
+Isso pode gerar bugs difíceis de entender.
+
+### Misturar muitos exports sem responsabilidade clara
+
+Um arquivo chamado `utils.js` com dezenas de funções sem relação vira um ponto de bagunça.
+
+Prefira arquivos com responsabilidade mais clara.
+
+---
+
+# 10 - Relação com outros estudos
+
+ES6 Modules se conectam com funções, objetos, Fetch API e modularização moderna.
+
+Depois deste conteúdo, faz sentido estudar `Frontend/estudos/javascript/documentos-de-estudo/secao-10-modularizacao/2 - Modularização moderna.md`.
+
+---
+
+# 11 - Conclusão
+
+ES6 Modules são a base da organização de código JavaScript moderno.
+
+Eles permitem dividir responsabilidades, reutilizar código e deixar dependências explícitas. Dominar `import` e `export` é obrigatório para trabalhar com aplicações frontend atuais.

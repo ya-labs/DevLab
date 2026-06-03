@@ -1,137 +1,274 @@
-    ```js
-Expressões e Instruções em JavaScript
+# Expressões em JavaScript
 
-Introdução
-Uma expressão é qualquer pedaço de código que retorna um valor. Diferente das instruções (statements), que apenas executam ações sem retornar valores diretos.
+Expressão é qualquer pedaço de código que produz um valor.
 
-Exemplos básicos:
+Entender expressões ajuda a ler melhor condicionais, atribuições, retornos de funções, arrow functions, operadores lógicos e avaliações de curto-circuito.
 
-    2 + 2; // 4
-    "oi " + "nicolas"; // "oi nicolas"
-    true && false // false
+---
 
-# _______________________________________________________________________________________________________________________
+# 1 - O que é uma expressão
 
-# . 1 - Expressão vs Instrução (Statement)
+Uma expressão sempre resulta em algum valor.
 
-    A diferença entre expressão e instrução é crucial em JavaScript:
+Exemplos:
 
-    !1 - Expressão (retorna valor)
-        Uma expressão sempre produz um valor que pode ser utilizado em outro contexto
+```js
+2 + 2;
+"Olá " + "Nícolas";
+idade >= 18;
+usuario.nome;
+somar(2, 3);
+```
 
-        -------exemplo---------
-        let x = 10 + 5;
-        
-        10 + 5 → expressão → resulta em 15
-        --------fim-exemplo-----
+Cada linha acima produz um valor:
 
-    !2 - Instrução/Statement (não retorna valor direto)
-        Uma instrução executa uma ação, mas não retorna um valor utilizável
+- `2 + 2` produz `4`;
+- `"Olá " + "Nícolas"` produz uma string;
+- `idade >= 18` produz `true` ou `false`;
+- `usuario.nome` produz o valor da propriedade;
+- `somar(2, 3)` produz o retorno da função.
 
-        -------exemplo---------
-        if (x > 10) {
-            console.log("maior");
-        }
-        --------fim-exemplo-----
+---
 
-        Isso é um statement, não uma expressão. Você não consegue fazer:
-        let resultado = if (x > 10) { 10 }; // Erro!
+# 2 - Expressão vs instrução
 
-# _______________________________________________________________________________________________________________________
+Uma expressão produz valor.
 
-# . 2 - Expressão de Atribuição
+Uma instrução executa uma ação.
 
-    A própria atribuição é uma expressão que retorna o valor atribuído
+Expressão:
 
-    -------exemplo---------
-    let x = 10;
+```js
+const resultado = 10 + 5;
+```
 
-    O 10 é uma expressão
-    E o próprio x = 10 também retorna valor
+`10 + 5` é uma expressão, porque produz `15`.
 
-    let y = (x = 10); // y recebe 10
-    console.log(y); // 10
-    --------fim-exemplo-----
+Instrução:
 
-# _______________________________________________________________________________________________________________________
+```js
+if (resultado > 10) {
+    console.log("Maior que 10");
+}
+```
 
-# . 3 - Expressão de Função
+O `if` é uma instrução de controle de fluxo. Ele decide qual bloco executar.
 
-    Uma função pode ser escrita como uma expressão (function expression) e armazenada em uma variável
+Você não pode usar um `if` tradicional como valor direto:
 
-    -------exemplo---------
-    const soma = function(a, b) {
-        return a + b;
-    };
+```js
+// Inválido
+const mensagem = if (idade >= 18) {
+    "Maior";
+};
+```
 
-    console.log(soma(2, 3)); // 5
-    --------fim-exemplo-----
+Para isso, use operador ternário.
 
-    Diferente de uma função declarada (que é um statement):
+```js
+const mensagem = idade >= 18 ? "Maior" : "Menor";
+```
 
-    -------exemplo---------
-    function somar(a, b) {
-        return a + b;
+---
+
+# 3 - Por que isso importa
+
+Saber diferenciar expressão de instrução ajuda a entender por que alguns códigos funcionam em certos lugares e outros não.
+
+Exemplo:
+
+```js
+const dobro = (numero) => numero * 2;
+```
+
+`numero * 2` é uma expressão. Por isso, a arrow function consegue retornar esse valor implicitamente.
+
+Agora:
+
+```js
+const validar = (idade) => {
+    if (idade >= 18) {
+        return "Maior";
     }
-    --------fim-exemplo-----
 
-# _______________________________________________________________________________________________________________________
+    return "Menor";
+};
+```
 
-# . 4 - Arrow Function (também é expressão)
+Aqui usamos bloco `{}` porque existe uma instrução `if` dentro da função.
 
-    Arrow functions são expressões mais concisas para escrever funções
+---
 
-    -------exemplo---------
-    const soma = (a, b) => a + b;
+# 4 - Expressões de atribuição
 
-    console.log(soma(2, 3)); // 5
-    --------fim-exemplo-----
+A atribuição também produz um valor.
 
-    Retorna automaticamente quando não há chaves {}
+```js
+let x;
+const y = (x = 10);
 
-# _______________________________________________________________________________________________________________________
+console.log(x); // 10
+console.log(y); // 10
+```
 
-# . 5 - Expressão Ternária
+Mesmo sendo possível, esse tipo de código pode reduzir legibilidade.
 
-    A expressão ternária é uma alternativa às condições if/else que retorna um valor direto
+Em código profissional, prefira separar quando a leitura ficar confusa.
 
-    -------exemplo---------
-    let resultado = idade >= 18 ? "maior" : "menor";
+```js
+let x = 10;
+const y = x;
+```
 
-    Diferente do if, que é um statement
-    --------fim-exemplo-----
+---
 
-    A expressão ternária sempre retorna um valor que pode ser utilizado em outro contexto:
+# 5 - Expressões de função
 
-    -------exemplo---------
-    const status = idade >= 18 ? "maior de idade" : "menor de idade";
-    console.log(status); // funciona perfeitamente
-    --------fim-exemplo-----
+Uma função pode ser criada como expressão e armazenada em variável.
 
-# _______________________________________________________________________________________________________________________
+```js
+const somar = function(a, b) {
+    return a + b;
+};
 
-# . 6 - Chamadas de Função
+console.log(somar(2, 3)); // 5
+```
 
-    Chamadas de função também são expressões, mesmo que retornem undefined
+Arrow functions também são expressões.
 
-    -------exemplo---------
-    console.log("oi"); // é uma expressão
+```js
+const somar = (a, b) => a + b;
+```
 
-    let resultado = console.log("teste"); // resultado = undefined
-    --------fim-exemplo-----
+Isso é muito comum em callbacks:
 
-# _______________________________________________________________________________________________________________________
+```js
+const numeros = [1, 2, 3];
 
-# . 7 - Teste Prático: É Expressão ou Não?
+const dobrados = numeros.map((numero) => numero * 2);
+```
 
-    A regra de ouro: se você consegue usar algo dentro de outro código esperando um valor, então é expressão
+---
 
-    -------exemplo---------
-    ✔️ FUNCIONA (expressão)
-    let x = 10 + 5; // expressão aritmética
-    let y = (x = 10); // expressão de atribuição
+# 6 - Expressões lógicas
 
-    ❌ NÃO FUNCIONA (statement)
-    let resultado = if (true) { 10 }; // erro - if não é expressão
-    --------fim-exemplo-----
+Operadores lógicos também retornam valores.
 
+```js
+console.log(true && "ativo"); // "ativo"
+console.log(false || "padrão"); // "padrão"
+console.log(null ?? "sem valor"); // "sem valor"
+```
+
+Esse comportamento é a base da avaliação de curto-circuito.
+
+O conteúdo é aprofundado em `Frontend/estudos/javascript/documentos-de-estudo/secao-06-expressoes-curto-circuito/2 - Avaliação de curto-circuito.md`.
+
+---
+
+# 7 - Expressões em retornos
+
+Funções geralmente retornam expressões.
+
+```js
+function calcularDesconto(preco, percentual) {
+    return preco * percentual;
+}
+```
+
+`preco * percentual` é a expressão retornada.
+
+Também pode retornar uma expressão mais completa:
+
+```js
+function usuarioPodeComprar(usuario) {
+    return usuario.ativo && usuario.idade >= 18;
+}
+```
+
+Esse tipo de retorno é comum, mas deve continuar legível.
+
+---
+
+# 8 - Exemplo prático completo
+
+```js
+function criarResumoUsuario(usuario) {
+    const status = usuario.ativo ? "Ativo" : "Inativo";
+    const nomeFormatado = usuario.nome.trim();
+    const podeAcessar = usuario.ativo && usuario.idade >= 18;
+
+    return {
+        nome: nomeFormatado,
+        status,
+        podeAcessar
+    };
+}
+
+const resumo = criarResumoUsuario({
+    nome: " Nícolas ",
+    idade: 20,
+    ativo: true
+});
+
+console.log(resumo);
+```
+
+Nesse exemplo:
+
+- o ternário produz o valor de `status`;
+- `trim()` produz uma nova string;
+- `&&` produz um booleano;
+- o objeto retornado também é uma expressão.
+
+---
+
+# 9 - Erros comuns
+
+### Confundir expressão com instrução
+
+```js
+const resultado = if (ativo) {
+    "Ativo";
+};
+```
+
+Use ternário quando precisa produzir valor.
+
+```js
+const resultado = ativo ? "Ativo" : "Inativo";
+```
+
+### Criar expressão grande demais
+
+```js
+const permitido = usuario && usuario.ativo && usuario.perfil === "admin" && usuario.configuracoes && usuario.configuracoes.acesso;
+```
+
+Esse código funciona, mas é difícil de ler.
+
+Prefira quebrar:
+
+```js
+const usuarioAtivo = usuario && usuario.ativo;
+const usuarioAdmin = usuario && usuario.perfil === "admin";
+const possuiAcesso = usuario && usuario.configuracoes && usuario.configuracoes.acesso;
+
+const permitido = usuarioAtivo && usuarioAdmin && possuiAcesso;
+```
+
+---
+
+# 10 - Relação com outros estudos
+
+Expressões se conectam com funções, operadores lógicos, curto-circuito, condicionais, arrays e retornos.
+
+Antes de estudar curto-circuito, é importante entender que operadores lógicos não retornam apenas `true` ou `false`; eles retornam valores.
+
+---
+
+# 11 - Conclusão
+
+Expressões são pequenas partes do código que produzem valores.
+
+Esse conceito parece simples, mas ajuda a entender muita coisa em JavaScript moderno: ternários, arrow functions, retornos, operadores lógicos, callbacks e composição de dados.

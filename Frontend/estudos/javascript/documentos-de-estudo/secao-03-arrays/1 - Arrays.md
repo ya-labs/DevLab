@@ -1,362 +1,397 @@
-    ```js
-# . 1 - o que é um array?
-## 1 - Conceito básico
-    array é uma estrutura que guarda vários valores em uma única variável, organizados por índice.
+# Arrays em JavaScript
 
-    const nomes = ["nicolas", "joao", "maria"];
+Arrays são estruturas usadas para guardar vários valores em uma única variável.
 
-## 2 - Regras importantes
-    - começa no índice 0
-    - acessa com colchetes []
-    - console.log(nomes[0]); // "nicolas"
+Eles são muito usados quando precisamos trabalhar com listas: lista de usuários, produtos, mensagens, tarefas, pedidos, filtros, itens de carrinho e muitos outros dados do dia a dia de uma aplicação.
 
-# ____________________________________________________________________________________________________________
+---
 
-# . 2 - criando arrays
-## 1 - Array vazio
-    const lista1 = [];
+# 1 - O que é um array
 
-## 2 - Array com valores
-    const lista2 = [1, 2, 3];
+Um array é uma coleção ordenada de valores.
 
-## 3 - Usando new Array (não recomendado)
-    const lista3 = new Array(10);
+Cada valor dentro do array ocupa uma posição chamada índice.
 
-# ____________________________________________________________________________________________________________
+Exemplo:
 
-# . 3 - tamanho do array
-## 1 - Propriedade length
-    const arr = [10, 20, 30];
+```js
+const nomes = ["Nícolas", "João", "Maria"];
+```
 
-    console.log(arr.length); // 3
+Nesse exemplo:
 
-# ____________________________________________________________________________________________________________
+- `"Nícolas"` está no índice `0`;
+- `"João"` está no índice `1`;
+- `"Maria"` está no índice `2`.
 
-# . 4 - adicionar elementos
-## 1 - Adicionar no final
-    const arr = [1, 2];
-    arr.push(3);
+O ponto importante é:
 
-## 2 - Adicionar no início
-    const arr = [1, 2];
-    arr.unshift(0);
+> Em JavaScript, arrays começam no índice `0`.
 
-# ____________________________________________________________________________________________________________
+Para acessar um valor:
 
-# . 5 - remover elementos
-## 1 - Remover do final
-    const arr = [1, 2, 3];
-    arr.pop();
+```js
+const nomes = ["Nícolas", "João", "Maria"];
 
-## 2 - Remover do início
-    const arr = [1, 2, 3];
-    arr.shift();
+console.log(nomes[0]); // "Nícolas"
+console.log(nomes[2]); // "Maria"
+```
 
-# ____________________________________________________________________________________________________________
+---
 
-# . 6 - buscar elementos
-## 1 - Verificar se existe
-    const arr = ["a", "b", "c"];
-    arr.includes("b"); // true
+# 2 - Por que arrays existem
 
-## 2 - Encontrar índice
-    const arr = ["a", "b", "c"];
-    arr.indexOf("b"); // 1
+Arrays existem para evitar a criação de várias variáveis separadas para representar dados parecidos.
 
-# ____________________________________________________________________________________________________________
+Sem array:
 
-# . 7 - percorrer array (LOOP)
-## 1 - For clássico (menos usado hoje)
-    for (let i = 0; i < arr.length; i++) {
-        console.log(arr[i]);
-    }
+```js
+const produto1 = "Arroz";
+const produto2 = "Feijão";
+const produto3 = "Macarrão";
+```
 
-## 2 - forEach (mais usado)
-    arr.forEach(function(item) {
-        console.log(item);
-    });
+Com array:
 
-    ou
+```js
+const produtos = ["Arroz", "Feijão", "Macarrão"];
+```
 
-    arr.forEach(item => console.log(item));
+Com o array, fica mais fácil:
 
-# ____________________________________________________________________________________________________________
+- percorrer todos os itens;
+- adicionar novos valores;
+- remover valores;
+- filtrar dados;
+- transformar uma lista em outra;
+- renderizar listas na tela;
+- enviar coleções para uma API.
 
-# . 8 - métodos IMPORTANTES
-## 1 - map → transformar
-    const numeros = [1, 2, 3];
+Na prática, qualquer tela que mostra vários registros provavelmente usa arrays em algum ponto.
 
-    const dobrados = numeros.map(n => n * 2);
+---
 
-    console.log(dobrados); // [2, 4, 6]
+# 3 - Criando arrays
 
-    retorna novo array
+A forma mais comum é usar colchetes.
 
-## 2 - filter → filtrar
-    const numeros = [1, 2, 3, 4];
+```js
+const listaVazia = [];
+const numeros = [1, 2, 3];
+const nomes = ["Ana", "Carlos", "Marina"];
+```
 
-    const pares = numeros.filter(n => n % 2 === 0);
+Um array também pode guardar valores de tipos diferentes, mas em código real isso costuma ser evitado quando a lista representa uma mesma coisa.
 
-    console.log(pares); // [2, 4]
+```js
+const dadosMisturados = ["Nícolas", 20, true];
+```
 
-## 3 - find → encontrar 1 item
-    const usuarios = [
-        { nome: "nico" },
-        { nome: "joao" }
-    ];
+Melhor, quando os dados pertencem à mesma entidade:
 
-    const user = usuarios.find(u => u.nome === "nico");
+```js
+const usuario = {
+    nome: "Nícolas",
+    idade: 20,
+    ativo: true
+};
+```
 
-    console.log(user);
+Arrays funcionam melhor quando guardam vários itens do mesmo tipo ou da mesma natureza.
 
-## 4 - some → algum passa?
-    arr.some(n => n > 10);
+---
 
-## 5 - every → todos passam?
-    arr.every(n => n > 0);
+# 4 - Tamanho do array
 
-## 6 - reduce → o mais poderoso
-    const nums = [1, 2, 3];
+A propriedade `length` retorna a quantidade de itens.
 
-    const soma = nums.reduce((acc, n) => acc + n, 0);
+```js
+const produtos = ["Arroz", "Feijão", "Macarrão"];
 
-    console.log(soma); // 6
+console.log(produtos.length); // 3
+```
 
-    usado pra:
-    - somar
-    - agrupar
-    - transformar estrutura
+Ela é muito usada em validações:
 
-# ____________________________________________________________________________________________________________
+```js
+const produtos = [];
 
-# . 9 - slice vs splice 
-## 1 - slice (NÃO altera original)
-    const arr = [1, 2, 3, 4];
+if (produtos.length === 0) {
+    console.log("Nenhum produto encontrado.");
+}
+```
 
-    const novo = arr.slice(1, 3);
+---
 
-    console.log(novo); // [2, 3]
+# 5 - Adicionando e removendo itens
 
-## 2 - splice (ALTERA o array)
-    const arr = [1, 2, 3];
+Para adicionar no final, use `push`.
 
-    arr.splice(1, 1); // remove 1 item a partir do índice 1
+```js
+const numeros = [1, 2];
 
-    console.log(arr); // [1, 3]
+numeros.push(3);
 
-# ____________________________________________________________________________________________________________
+console.log(numeros); // [1, 2, 3]
+```
 
-# . 10 - arrays de objetos
-## 1 - Estrutura básica
-    const usuarios = [
-        { nome: "nico", idade: 20 },
-        { nome: "joao", idade: 30 }
-    ];
+Para adicionar no começo, use `unshift`.
 
-## 2 - Operações com filter
-    const maiores = usuarios.filter(u => u.idade >= 21);
+```js
+const numeros = [2, 3];
 
-# ____________________________________________________________________________________________________________
+numeros.unshift(1);
 
-# . 11 - referência vs cópia 
-## 1 - Problema de referência
-    const a = [1, 2];
-    const b = a;
+console.log(numeros); // [1, 2, 3]
+```
 
-    b.push(3);
+Para remover do final, use `pop`.
 
-    console.log(a); // [1, 2, 3]
+```js
+const numeros = [1, 2, 3];
 
-    isso acontece porque array é referência
+const removido = numeros.pop();
 
-## 2 - Copiar corretamente
-    const copia = [...a];
+console.log(removido); // 3
+console.log(numeros); // [1, 2]
+```
 
-# ____________________________________________________________________________________________________________
+Para remover do começo, use `shift`.
 
-# . 12 - destructuring
-## 1 - Desempacotando arrays
-    const arr = [10, 20];
+```js
+const numeros = [1, 2, 3];
 
-    const [a, b] = arr;
+const removido = numeros.shift();
 
-    console.log(a); // 10
+console.log(removido); // 1
+console.log(numeros); // [2, 3]
+```
 
-# ____________________________________________________________________________________________________________
+Esses métodos alteram o array original.
 
-# . 13 - spread operator
-## 1 - Unindo arrays
-    const a = [1, 2];
-    const b = [3, 4];
+---
 
-    const c = [...a, ...b];
+# 6 - Buscando itens
 
-# ____________________________________________________________________________________________________________
+Para verificar se um valor existe, use `includes`.
 
-# . 14 - arrays + async
-## 1 - O erro clássico
-    const ids = [1, 2, 3];
+```js
+const permissoes = ["criar", "editar", "excluir"];
 
-    ids.forEach(async (id) => {
-        await buscarUsuario(id);
-    });
+console.log(permissoes.includes("editar")); // true
+```
 
-    forEach não espera async
+Para encontrar o índice de um valor, use `indexOf`.
 
-## 2 - Com Promise.all (paralelo - mais usado)
-    const ids = [1, 2, 3];
+```js
+const nomes = ["Ana", "Carlos", "Marina"];
 
-    const promessas = ids.map(id => buscarUsuario(id));
+console.log(nomes.indexOf("Carlos")); // 1
+console.log(nomes.indexOf("João")); // -1
+```
 
-    const usuarios = await Promise.all(promessas);
+Quando o array possui objetos, `includes` e `indexOf` geralmente não resolvem bem, porque objetos são comparados por referência.
 
-    roda tudo ao mesmo tempo → mais rápido
+Nesse caso, use `find` ou `some`.
 
-## 3 - Com for...of (sequencial)
-    const usuarios = [];
+```js
+const usuarios = [
+    { id: 1, nome: "Ana" },
+    { id: 2, nome: "Carlos" }
+];
 
-    for (const id of ids) {
-        const user = await buscarUsuario(id);
-        usuarios.push(user);
-    }
+const usuario = usuarios.find(function(item) {
+    return item.id === 2;
+});
 
-    usa quando depende da ordem ou de um resultado anterior
+console.log(usuario); // { id: 2, nome: "Carlos" }
+```
 
-## 4 - Regra prática
-    pode rodar junto? → Promise.all
-    precisa ordem? → for...of
+---
 
-# ____________________________________________________________________________________________________________
+# 7 - Percorrendo arrays
 
-# . 15 - imutabilidade
-## 1 - Princípio geral (Angular/React)
-    na prática, você não deve mutar array diretamente
+Para executar uma ação para cada item, use `forEach`.
 
-    ❌ errado:
-    arr.push(4);
+```js
+const nomes = ["Ana", "Carlos", "Marina"];
 
-    ✅ certo:
-    const novo = [...arr, 4];
+nomes.forEach(function(nome) {
+    console.log(nome);
+});
+```
 
-## 2 - Atualizar item dentro do array
-    const usuarios = [
-        { id: 1, nome: "nico" },
-        { id: 2, nome: "joao" }
-    ];
+Para transformar uma lista em outra, use `map`.
 
-    const atualizado = usuarios.map(u =>
-        u.id === 1 ? { ...u, nome: "novo nome" } : u
-    );
+```js
+const produtos = [
+    { nome: "Arroz", preco: 20 },
+    { nome: "Feijão", preco: 12 }
+];
 
-    isso aqui é MUITO usado em front
+const nomes = produtos.map(function(produto) {
+    return produto.nome;
+});
 
-# ____________________________________________________________________________________________________________
+console.log(nomes); // ["Arroz", "Feijão"]
+```
 
-# . 16 - performance
-## 1 - Evitar múltiplos loops
-    ❌ ruim (vários loops):
-    arr.filter(...).map(...).reduce(...);
+Para filtrar itens, use `filter`.
 
-    ✅ melhor (1 loop só):
-    const resultado = arr.reduce((acc, item) => {
-        if (item.ativo) {
-            acc.push(item.valor * 2);
-        }
-        return acc;
-    }, []);
+```js
+const produtos = [
+    { nome: "Arroz", ativo: true },
+    { nome: "Feijão", ativo: false },
+    { nome: "Macarrão", ativo: true }
+];
 
-    menos iteração → mais performático
+const produtosAtivos = produtos.filter(function(produto) {
+    return produto.ativo;
+});
 
-# ____________________________________________________________________________________________________________
+console.log(produtosAtivos);
+```
 
-# . 17 - estruturação de dados
-## 1 - Transformar array em objeto (indexação rápida)
-    const usuarios = [
-        { id: 1, nome: "nico" },
-        { id: 2, nome: "joao" }
-    ];
+Para acumular um resultado, use `reduce`.
 
-    const mapa = usuarios.reduce((acc, u) => {
-        acc[u.id] = u;
-        return acc;
-    }, {});
+```js
+const itens = [
+    { nome: "Arroz", preco: 20 },
+    { nome: "Feijão", preco: 12 }
+];
 
-    agora você acessa em O(1):
+const total = itens.reduce(function(acumulador, item) {
+    return acumulador + item.preco;
+}, 0);
 
-    mapa[1];
+console.log(total); // 32
+```
 
-# ____________________________________________________________________________________________________________
+---
 
-# . 18 - flat e flatMap
-## 1 - flat (array dentro de array)
-    const arr = [[1, 2], [3, 4]];
+# 8 - Métodos que alteram e métodos que retornam novo array
 
-    const flat = arr.flat(); // [1, 2, 3, 4]
-    
-    o flat tem um parâmetro opcional pra controlar a profundidade:
-    const arr = [1, [2, [3, 4]]];
-    const flat = arr.flat(2); // [1, 2, 3, 4]
+Alguns métodos modificam o array original.
 
+Exemplos:
 
-## 2 - flatMap (map + flatten)
-    const frases = ["oi mundo", "js é bom"];
+- `push`;
+- `pop`;
+- `shift`;
+- `unshift`;
+- `splice`;
+- `sort`;
+- `reverse`.
 
-    const palavras = frases.flatMap(f => f.split(" "));
-    
-    flatmap é muito usado pra transformar e achatar em um passo só.
+Outros retornam um novo array.
 
-# ____________________________________________________________________________________________________________
+Exemplos:
 
-# . 19 - deduplicar array
-## 1 - Removendo duplicatas
-    const arr = [1, 1, 2, 3];
+- `map`;
+- `filter`;
+- `slice`;
+- `concat`;
+- spread operator (`...`).
 
-    const unico = [...new Set(arr)];
+Exemplo usando spread:
 
-    esse set é uma estrutura que só aceita valores únicos, então ele automaticamente remove duplicatas.
+```js
+const numeros = [1, 2, 3];
+const novosNumeros = [...numeros, 4];
 
-# ____________________________________________________________________________________________________________
+console.log(numeros); // [1, 2, 3]
+console.log(novosNumeros); // [1, 2, 3, 4]
+```
 
-# . 20 - ordenação (sort)
-## 1 - Cuidado: sort muta o array
-    const nums = [10, 2, 5];
+Em projetos modernos, principalmente com React, é comum preferir criar novos arrays em vez de modificar o original diretamente.
 
-    nums.sort((a, b) => a - b);
+---
 
-## 2 - Ordenar objetos
-    usuarios.sort((a, b) => a.idade - b.idade);
+# 9 - Exemplo prático completo
 
-# ____________________________________________________________________________________________________________
+```js
+const produtos = [
+    { id: 1, nome: "Arroz", preco: 20, ativo: true },
+    { id: 2, nome: "Feijão", preco: 12, ativo: false },
+    { id: 3, nome: "Macarrão", preco: 8, ativo: true }
+];
 
-# . 21 - exemplo REAL 
-## 1 - Cenário: API de pedidos
-    imagina API de pedidos:
+const produtosAtivos = produtos.filter(function(produto) {
+    return produto.ativo;
+});
 
-    const pedidos = [
-        { id: 1, cliente: "nico", valor: 100, ativo: true },
-        { id: 2, cliente: "joao", valor: 200, ativo: false },
-        { id: 3, cliente: "nico", valor: 50, ativo: true }
-    ];
+const nomesProdutosAtivos = produtosAtivos.map(function(produto) {
+    return produto.nome;
+});
 
-    objetivo:
-    - só ativos
-    - agrupar por cliente
-    - somar valores
+const total = produtosAtivos.reduce(function(acumulador, produto) {
+    return acumulador + produto.preco;
+}, 0);
 
-## 2 - Solução profissional
-    const resultado = pedidos
-        .filter(p => p.ativo)
-        .reduce((acc, p) => {
-            if (!acc[p.cliente]) {
-                acc[p.cliente] = 0;
-            }
-            acc[p.cliente] += p.valor;
-            return acc;
-        }, {});
+console.log(nomesProdutosAtivos); // ["Arroz", "Macarrão"]
+console.log(total); // 28
+```
 
-    saída:
-    {
-        nico: 150
-    }
+Esse exemplo mostra um fluxo comum em aplicações reais:
 
-# ____________________________________________________________________________________________________________
+- receber uma lista;
+- filtrar registros válidos;
+- transformar os dados para exibição;
+- calcular um resultado.
+
+---
+
+# 10 - Erros comuns
+
+### Achar que o primeiro índice é 1
+
+```js
+const nomes = ["Ana", "Carlos"];
+
+console.log(nomes[1]); // "Carlos", não "Ana"
+```
+
+### Alterar array original sem perceber
+
+```js
+const numeros = [3, 1, 2];
+
+numeros.sort();
+
+console.log(numeros); // [1, 2, 3]
+```
+
+`sort` altera o array original. Se isso for um problema, crie uma cópia antes.
+
+```js
+const numeros = [3, 1, 2];
+const ordenados = [...numeros].sort();
+```
+
+### Usar `map` quando não precisa retornar nada
+
+```js
+nomes.map(function(nome) {
+    console.log(nome);
+});
+```
+
+Nesse caso, `forEach` é mais adequado, porque a intenção é só executar uma ação.
+
+---
+
+# 11 - Relação com outros estudos
+
+Arrays se conectam diretamente com objetos, porque em código real é muito comum trabalhar com arrays de objetos.
+
+Antes de avançar para métodos mais complexos, vale revisar `Frontend/estudos/javascript/documentos-de-estudo/secao-04-objetos/1 - Objetos.md`.
+
+Também se conecta com funções, porque métodos como `map`, `filter`, `find`, `some` e `reduce` recebem funções como argumento.
+
+---
+
+# 12 - Conclusão
+
+Arrays são uma das estruturas mais importantes do JavaScript.
+
+Eles permitem representar listas e trabalhar com coleções de dados de forma organizada. No uso real, dominar arrays significa conseguir manipular dados vindos de APIs, montar telas, filtrar registros, calcular totais e transformar informações para exibição.

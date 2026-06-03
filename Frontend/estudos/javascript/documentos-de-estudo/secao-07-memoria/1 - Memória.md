@@ -1,431 +1,278 @@
-    ```js
-Memória no JavaScript
+# Memória em JavaScript
 
-JavaScript é uma linguagem GERENCIADA, ou seja, o desenvolvedor não controla diretamente a alocação e a liberação de memória.
+JavaScript é uma linguagem com gerenciamento automático de memória.
 
-A engine (como v8) é responsável por:
+Isso significa que o desenvolvedor não aloca e libera memória manualmente como faria em linguagens de baixo nível. A engine do JavaScript, como V8, SpiderMonkey ou JavaScriptCore, gerencia boa parte desse processo.
 
-- alocar memória
-- gerenciar o uso
-- liberar memória automaticamente (garbage collector)
+---
 
-# ____________________________________________________________
+# 1 - Por que estudar memória
 
-# . 1 - Estrutura da memória
-## 1 - Stack (Pilha)
-    responsável pela execução do código.
+Mesmo com gerenciamento automático, entender memória ajuda a explicar comportamentos importantes da linguagem.
 
-    Armazena:  
-        - variáveis primitivas
-        - referências para objetos
-        - contexto de execução das funções
+Esse assunto ajuda a entender:
 
-    Características:
-        - muito rápida
-        - tamanho limitado
-        - organização LIFO (Last In, First Out)
+- diferença entre primitivos e objetos;
+- comparação por valor e por referência;
+- cópias rasas;
+- mutações em objetos e arrays;
+- closures;
+- vazamentos de memória;
+- garbage collector.
 
-## 2 - Heap (Montante)
-    responsável pelo armazenamento de dados complexos.
-    heap é uma área de memória não estruturada.
+Na prática, muitos bugs de JavaScript acontecem porque o desenvolvedor acha que está copiando um objeto, mas está apenas copiando a referência.
 
-    Armazena:
-        - objetos
-        - arrays
-        - funções
-        - closures
+---
 
-    Características:
-        - maior que a Stack
-        - mais lenta
-        - gerenciada pelo garbage collector
+# 2 - Stack e Heap
 
-## 3 - Resumo
-    - stack = execução
-    - heap  = dados
+A memória costuma ser explicada usando duas áreas principais: stack e heap.
 
-# ____________________________________________________________
+## Stack
 
-# . 2 - Tipos de dado e memória
-## 1 - Tipos primitivos
-    number, string, boolean, null, undefined, symbol, bigint
+A stack, ou pilha, guarda informações de execução.
 
-    exemplo:
-    let a = 10;
-    let b = a;
+Ela armazena:
 
-    b = 20;
+- chamadas de funções;
+- variáveis locais;
+- valores primitivos;
+- referências para objetos.
 
-    console.log(a); // 10
+Características:
 
-    -> Cada variável possui seu próprio valor na memória
+- é rápida;
+- tem tamanho mais limitado;
+- segue a lógica LIFO, ou seja, o último item que entra é o primeiro que sai.
 
-## 2 - Tipos por referência
-    exemplo: 
-    let obj1 = { nome: "Nícolas" };
-    let obj2 = obj1;
+## Heap
 
-    obj2.nome = "joao";
+A heap guarda dados mais complexos e dinâmicos.
 
-    console.log(obj1.nome) // "joao"
+Ela armazena:
 
-    stack:
-        obj1 → endereço 0x123
-        obj2 → endereço 0x123
+- objetos;
+- arrays;
+- funções;
+- closures;
+- estruturas que precisam viver além de uma chamada simples.
 
-    heap:
-        0x123 → { nome: "joao" }
+Resumo prático:
 
-    -> stack guarda o endereço
-    -> heap guarda o objeto real
-    -> múltiplas variáveis podem apontar para o mesmo objeto
+> Stack guarda execução e referências. Heap guarda objetos reais.
 
-# ____________________________________________________________
+---
 
-# . 3 - Comparação de valores
-## 1 - Primitivos
-    10 === 10 // true
+# 3 - Tipos primitivos e memória
 
-## 2 - Objetos
-    {} === {} // false
-    
-    Motivo: são posições diferentes na memória
+Tipos primitivos são copiados por valor.
 
-# ____________________________________________________________
+Exemplos:
 
-# . 4 - Mutabilidade
-## 1 - Imutáveis (primitivos)
-    let nome = "nícolas";
-    nome[0] = "x";
+- `number`;
+- `string`;
+- `boolean`;
+- `null`;
+- `undefined`;
+- `symbol`;
+- `bigint`.
 
-    console.log(nome); // "nicolas"
+```js
+let a = 10;
+let b = a;
 
-## 2 - Mútaveis (objetos)
-    let user = { nome: "nícolas" } 
-    user.nome = "joao";
+b = 20;
 
-# ____________________________________________________________
+console.log(a); // 10
+console.log(b); // 20
+```
 
-# . 5 - Passagem de valores
-## 1 - Por valor (primitivos)
-    function alterar(x) {
-        x = 20;
+Alterar `b` não altera `a`, porque cada variável possui seu próprio valor.
+
+---
+
+# 4 - Objetos e referências
+
+Objetos, arrays e funções são trabalhados por referência.
+
+```js
+const usuario1 = {
+    nome: "Nícolas"
+};
+
+const usuario2 = usuario1;
+
+usuario2.nome = "Ana";
+
+console.log(usuario1.nome); // "Ana"
+```
+
+Isso acontece porque `usuario1` e `usuario2` apontam para o mesmo objeto na heap.
+
+Não existem dois objetos nesse exemplo. Existem duas variáveis apontando para o mesmo objeto.
+
+---
+
+# 5 - Cópia rasa
+
+Para criar uma cópia simples de um objeto, use spread.
+
+```js
+const usuario1 = {
+    nome: "Nícolas",
+    idade: 20
+};
+
+const usuario2 = {
+    ...usuario1
+};
+
+usuario2.nome = "Ana";
+
+console.log(usuario1.nome); // "Nícolas"
+```
+
+Mas isso é uma cópia rasa.
+
+Objetos internos continuam compartilhando referência.
+
+```js
+const usuario1 = {
+    nome: "Nícolas",
+    endereco: {
+        cidade: "São Paulo"
     }
+};
 
-    let a = 10
-    alterar(a);
+const usuario2 = {
+    ...usuario1
+};
 
-    console.log(a) // 10
+usuario2.endereco.cidade = "Campinas";
 
-## 2 - Por referência (objetos)
-    function alterar(obj) {
-        obj.nome = "joao";
-    }
+console.log(usuario1.endereco.cidade); // "Campinas"
+```
 
-    let user = { nome: "nicolas" };
-    alterar(user);
+Para estruturas profundas, é preciso cuidado extra.
 
-    console.log(user.nome); // "joao"
+---
 
-# ____________________________________________________________
+# 6 - Garbage collector
 
-# . 6 - Call Stack (Pilha de execução)
-## 1 - Controlando chamadas de funções
-    responsável por controlar chamadas de funções
-    
-    exemplo:
-        function a() {
-            b();
-        }
+Garbage collector é o mecanismo que libera memória que não está mais sendo usada.
 
-        function b() {
-            c();
-        }
+Exemplo:
 
-        function c() {
-            console.log("oi");
-        }
+```js
+let usuario = {
+    nome: "Nícolas"
+};
 
-        a();
+usuario = null;
+```
 
-## 2 - Ordem de execução
-    execução:
-    1 - global
-    2 - a();
-    3 - b();
-    4 - c();
+Depois que o objeto deixa de ter referências acessíveis, ele pode ser removido da memória pelo garbage collector.
 
-    após execução:
-    funções são removidas da stack
-    
-    o que acontece na stack:
-        [global]
-        [a]
-        [b]
-        [c]
+O desenvolvedor não controla exatamente quando isso acontece.
 
-        quando c termina:
+---
 
-        [global]
-        [a]
-        [b]
+# 7 - Vazamento de memória
 
-        vai desempilhando até voltar pro global
+Vazamento de memória acontece quando algo que não deveria mais ser usado continua referenciado.
 
-# ____________________________________________________________
+Exemplos comuns:
 
-# . 7 - Stack Overflow
-## 1 - Ultrapassar limite da stack
-    Ocorre quando a stack ultrapassa seu limite.
+- listeners de eventos não removidos;
+- timers ativos sem necessidade;
+- referências globais;
+- closures mantendo objetos grandes;
+- elementos DOM removidos da tela, mas ainda referenciados no JavaScript.
 
-    exemplo:
-        function loop() {
-            loop();
-        }
+Exemplo:
 
-        loop();
+```js
+function iniciarRelogio() {
+    setInterval(function() {
+        console.log("Executando...");
+    }, 1000);
+}
+```
 
-        erro: Maximum call stack size exceeded
+Se esse intervalo não for limpo quando não for mais necessário, ele continua executando e mantendo referências.
 
-# ____________________________________________________________
+---
 
-# . 8 - Heap na prática
-## 1 - Heap e referências
-    exemplo:
-        let user = { nome: "nícolas" }
-    
-        stack:
-        - user -> referência
-        heap:
-        - objeto armazenado
+# 8 - Exemplo prático completo
 
-# ____________________________________________________________
-
-# . 9 - Garbage Collector (GC)
-## 1 - Liberação automática de memória
-    responsável por liberar memória automaticamente
-    
-    conceito principal: Reachability
-    - Um valor é mantido na memória se for alcançável
-
-## 2 - Exemplo prático
-    exemplo:
-    let obj = { nome: "nícolas" };
-    obj = null;
-
-    o objeto antigo perde a referência e pode ser removido.
-
-# ____________________________________________________________
-
-# . 10 - Memory leaks
-## 1 - Variáveis globais
-    function criar() {
-        dado = {pesado: true}; // sem let/const
-    }
-
-## 2 - Estruturas acumulativas
-    let lista = [];
-
-    function adicionar() {
-        lista.push(new Array(100000));
-    }
-
-## 3 - Closures
-    function criar () {
-        let grande = new Array(1000000);
-
-        return function() {
-            return "ok";
-        }
-    }
-
-## 4 - Event listeners
-    element.addEventListener("click", () => {
-        console.log("clicou");
-    });
-
-    -> se não removidos, permanecem na memória.
-
-# ____________________________________________________________
-
-# . 11 - Shallow Copy vs Deep Copy
-## 1 - Shallow (cópia rasa)
-    const a = {
-        nome: "nícolas",
-        endereco: {
-            cidade: "x"
-        }
+```js
+function atualizarUsuario(usuario, novoNome) {
+    return {
+        ...usuario,
+        nome: novoNome
     };
+}
 
-    const b = { ...a };
-    
-    b.endereco.cidade = "y";
+const usuarioOriginal = {
+    nome: "Nícolas",
+    ativo: true
+};
 
-    console.log(a.endereco.cidade); // "y"
+const usuarioAtualizado = atualizarUsuario(usuarioOriginal, "Ana");
 
-    limitações:
-    - não copia níveis internos
-    - mantém referências
+console.log(usuarioOriginal.nome); // "Nícolas"
+console.log(usuarioAtualizado.nome); // "Ana"
+```
 
-## 2 - Deep Copy com JSON
-    const b = JSON.parse(JSON.stringify(a));
+Esse exemplo evita alterar o objeto original.
 
-    limitações:
-    - não copia métodos
-    - perde objetos especiais (Date, Map, etc)
+Esse padrão é importante em aplicações modernas, principalmente quando se trabalha com estado.
 
-## 3 - structuredClone (moderno)
-    const copia = structuredClone(obj);
+---
 
-    vantagens
-    - faz deep copy real
-    - suporta:
-        - objetos
-        - arrays
-        - Date
-        - Map
-        - Set
-        - ArrayBuffer
-    - não compartilha referência
+# 9 - Erros comuns
 
-    limitações
-    não copia:
-    - funções
-    - DOM
-    - não preserva protótipos customizados (em alguns casos)
+### Achar que objeto foi copiado
 
-    EXEMPLO:
-    const original = {
-        data: new Date(),
-        lista: [1, 2, 3]
-    };
+```js
+const a = { nome: "Nícolas" };
+const b = a;
 
-    const copia = structuredClone(original);
+b.nome = "Ana";
 
-    console.log(copia);
+console.log(a.nome); // "Ana"
+```
 
-## 4 - Quando usar cada abordagem
-    🟢 caso 1 — objeto simples
-    const copia = { ...obj };
-    - rápido e suficiente
+Isso não é cópia. É referência compartilhada.
 
-    🟡 caso 2 — objeto com níveis internos
-    const copia = structuredClone(obj);
-    - padrão atual recomendado
+### Ignorar objetos aninhados
 
-    🔴 caso 3 — precisa preservar comportamento (funções, classes)
-    aí você precisa de clonagem manual
+```js
+const copia = {
+    ...usuario
+};
+```
 
-## 5 - Clone customizado
-    function deepClone(obj) {
-        if (obj === null || typeof obj !== "object") {
-            return obj;
-        }
+Essa cópia só resolve o primeiro nível.
 
-        if (obj instanceof Date) {
-            return new Date(obj);
-        }
+### Manter referências desnecessárias
 
-        if (Array.isArray(obj)) {
-            return obj.map(item => deepClone(item));
-        }
+Guardar dados grandes em variáveis globais, caches sem limpeza ou listeners antigos pode prejudicar performance.
 
-        const novo = {};
+---
 
-        for (let chave in obj) {
-            if (obj.hasOwnProperty(chave)) {
-            novo[chave] = deepClone(obj[chave]);
-            }
-        }
+# 10 - Relação com outros estudos
 
-        return novo;
-    }
+Memória se conecta com arrays, objetos, funções, closures, DOM e React.
 
-    vantagens
-    - controle total
-    - você decide o que copiar
-    - pode preservar regras de negócio
-    
-    desvantagens
-    - mais código
-    - manutenção
-    - risco de bug
+Antes de estudar closures com profundidade, vale entender que funções podem manter referências vivas.
 
-## 6 - Arquitetura sem cópias excessivas
-    em sistemas grandes, a solução NÃO é sair clonando tudo
-    - o correto é evitar mutação
+Antes de manipular DOM de forma intensa, vale lembrar que elementos também podem ficar presos na memória por referências JavaScript.
 
-    usar imutabilidade
-        const novoUser = {
-            ...user,
-            nome: "joao"
-        };
-    
-    ou libs (em projetos modernos)
-        immer
-        lodash.cloneDeep
-    
-    erro clássico
-        const config = defaultConfig;
-        config.debug = true;
+---
 
-        - isso NÃO é cópia, isso é referência
-    
-    se você precisa de cópia profunda toda hora → arquitetura está errada
-    prefira:
-    - dados imutáveis
-    - funções puras
-    - controle de estado
+# 11 - Conclusão
 
-# ____________________________________________________________
+JavaScript gerencia memória automaticamente, mas isso não elimina a responsabilidade do desenvolvedor.
 
-# . 12 - Closures
-## 1 - Mantendo acesso ao escopo externo
-    Closures mantêm acesso ao escopo externo mesmo após execução.
-
-    function contador () {
-        let i = 0;
-
-        return function () {
-            i++;
-            return i;
-        };
-    }
-
-# ____________________________________________________________
-
-# . 13 - Event Loop 
-## 1 - Operações assíncronas e memória
-    operações assíncronas também utilizam memória até serem executadas.
-
-## 2 - Stack + async
-    function a() {
-        setTimeout(() => {
-            console.log("oi");
-        }, 1000);
-    }
-
-    a();
-
-    stack:
-        - executa a
-        - agenda callback
-        - limpa stack
-
-    depois:
-        - callback entra na stack novamente
-
-    isso é o event loop trabalhando
-
-# ____________________________________________________________
-
-# . 14 - Boas práticas
-## 1 - Prevenção de memory leaks
-    - sempre usar let/const
-    - evitar variáveis globais
-    - remover event listeners quando não usados
-    - evitar mutações inesperadas
-    - limpar estruturas grandes quando não necessárias
-    - entender quando usar cópia profunda
-
-# ____________________________________________________________
+Entender stack, heap, referência, cópia rasa e garbage collector ajuda a evitar bugs difíceis e melhora a forma de pensar sobre objetos, arrays, funções e estado.

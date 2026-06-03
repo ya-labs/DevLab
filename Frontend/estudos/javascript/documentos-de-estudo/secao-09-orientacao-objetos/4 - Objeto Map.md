@@ -1,167 +1,275 @@
-    ```js
-Map é uma estrutura de dados que armazena pares chave - valor, parecido com objetos,
-mas com várias vantagens importantes.
+# Objeto Map em JavaScript
 
-# . 1 - Diferenças principais entre Map e Object
-## 1 - Chaves de qualquer tipo
-    Map permite usar qualquer tipo como chave (objetos, funções, etc), enquanto objetos só permitem strings ou símbolos.
+`Map` é uma estrutura de dados usada para armazenar pares de chave e valor.
 
-## 2 - Ordem de inserção
-    Map mantém a ordem de inserção dos pares chave-valor, enquanto objetos não garantem isso.
+Ele parece um objeto comum, mas foi criado especificamente para trabalhar como coleção dinâmica de entradas.
 
-## 3 - Performance
-    Melhor para muitas operações, porque é otimizado para isso, enquanto objetos podem ter performance degradada com muitas chaves.
+---
 
-## 4 - Iteração fácil
-    Map tem métodos nativos para iterar (forEach, keys, values, entries) por conta de sua estrutura interna ser um array, enquanto objetos exigem mais trabalho para iterar.
+# 1 - O que é Map
 
-## 5 - Tamanho
-    Map tem a propriedade size para obter o número de pares, enquanto objetos exigem contagem manual.
+Um `Map` guarda valores associados a chaves.
 
-    Resumindo:
-    - Objetos são melhores para estruturas simples e fixas, enquanto Map é melhor para coleções dinâmicas e complexas.
+```js
+const mapa = new Map();
 
-# __________________________________________________________________________________________________________________
+mapa.set("nome", "Nícolas");
+mapa.set("idade", 20);
 
-# . 2 - Criando um Map
-    const mapa = new Map();
+console.log(mapa.get("nome")); // "Nícolas"
+```
 
-    const mapa2 = new Map([
-        ["chave1", "valor1"],
-        ["chave2", "valor2"]
-    ]);
+Cada entrada possui:
 
-# __________________________________________________________________________________________________________________
+- uma chave;
+- um valor.
 
-# . 3 - Métodos principais
-## 1 - set(chave, valor)
-    mapa.set("chave", "valor");
-    mapa.set(1, "valor numérico");
-    mapa.set(true, "valor booleano");
+---
 
-## 2 - get(chave)
-    console.log(mapa.get("chave")); // valor
+# 2 - Por que Map existe
 
-## 3 - has(chave)
-    console.log(mapa.has("chave")); // true
+Objetos comuns funcionam bem para representar entidades.
 
-## 4 - delete(chave)
-    mapa.delete("chave");
+```js
+const usuario = {
+    nome: "Nícolas",
+    idade: 20
+};
+```
 
-## 5 - clear()
-    mapa.clear();
+Mas quando a intenção é trabalhar com uma coleção dinâmica de chave e valor, `Map` pode ser melhor.
 
-## 6 - size
-    console.log(mapa.size); // número de pares chave-valor
+Ele oferece:
 
-# __________________________________________________________________________________________________________________
+- chaves de qualquer tipo;
+- ordem de inserção preservada;
+- propriedade `size`;
+- métodos próprios para coleção;
+- iteração mais direta.
 
-# . 4 - Iteração
-## 1 - for...of
-    for (const [chave, valor] of mapa) {
-        console.log(chave, valor);
-    }
+---
 
-## 2 - forEach
-    mapa.forEach((valor, chave) => {
-        console.log(chave, valor);
-    });
+# 3 - Map vs Object
 
-## 3 - keys()
-    for (const chave of mapa.keys()) {
-        console.log(chave);
-    }
+Objeto comum:
 
-## 4 - values()
-    for (const valor of mapa.values()) {
-        console.log(valor);
-    }
+```js
+const usuario = {
+    nome: "Nícolas",
+    idade: 20
+};
+```
 
-## 5 - entries()
-    for (const [chave, valor] of mapa.entries()) {
-        console.log(chave, valor);
-    }
+Melhor para representar dados com estrutura conhecida.
 
-# __________________________________________________________________________________________________________________
+Map:
 
-# . 5 - Comparação de chaves
-    O Map usa comparação por referência, não por valor.
+```js
+const permissoes = new Map();
 
-    const obj1 = { };
-    const obj2 = { };
+permissoes.set("admin", true);
+permissoes.set("financeiro", false);
+```
 
-    mapa.set(obj1, "valor");
+Melhor para coleções de pares chave-valor que podem crescer, mudar e ser iteradas.
 
-    console.log(mapa.get(obj2)); // undefined, porque obj1 e obj2 são referências diferentes
+Regra prática:
 
-    // É como se todas as chaves do Map fossem objetos, mesmo que sejam strings ou números, elas são convertidas para objetos internamente.
+> Use objeto para modelar uma entidade. Use Map para coleção dinâmica de chave e valor.
 
-# __________________________________________________________________________________________________________________
+---
 
-# . 6 - Vantagens do Map
-    - Permite chaves de qualquer tipo
-    - Mantém a ordem de inserção
-    - Melhor performance para grandes coleções
-    - Métodos nativos para iteração
-    - Propriedade size para contar pares chave-valor
+# 4 - Criando um Map
 
-# __________________________________________________________________________________________________________________
+Map vazio:
 
-# . 7 - Casos reais de uso
-## 1 - Cache
-    const cache = new Map();
+```js
+const mapa = new Map();
+```
 
-    function buscar(id) {
-        if (cache.has(id))
-            return cache.get(id);
+Map com valores iniciais:
 
-        const resultado = "dados do banco";
-        cache.set(id, resultado);
+```js
+const statusPedidos = new Map([
+    ["aberto", "Pedido em aberto"],
+    ["pago", "Pedido pago"],
+    ["cancelado", "Pedido cancelado"]
+]);
+```
 
-        return resultado;
-    }
+---
 
+# 5 - Métodos principais
 
-## 2 - Contagem de ocorrências
-    const lista = ["a", "b", "a", "c", "b", "a"];
-    const contagem = new Map();
+Adicionar ou atualizar:
 
-    for (let item of lista) {
-        contagem.set(item, (contagem.get(item) || 0) + 1);
-    }
+```js
+statusPedidos.set("enviado", "Pedido enviado");
+```
 
-    console.log(contagem); // Map { "a" => 3, "b" => 2, "c" => 1 }
+Buscar:
 
-## 3 - Chaves complexas (OBJETO como chave)
-    const usuarios = new Map();
+```js
+console.log(statusPedidos.get("pago"));
+```
 
-    const user1 = { nome: "nico" };
-    const user2 = { nome: "joao" };
+Verificar existência:
 
-    usuarios.set(user1, "dados do nico");
-    usuarios.set(user2, "dados do joao");
+```js
+console.log(statusPedidos.has("cancelado"));
+```
 
-    console.log(usuarios.get(user1)); // dados do nico
-    console.log(usuarios.get(user2)); // dados do joao
+Remover:
 
-    // isso aqui é impossível com objeto.
+```js
+statusPedidos.delete("aberto");
+```
 
-# __________________________________________________________________________________________________________________
+Limpar tudo:
 
-# . 8 - Convertendo Map para Object e vice-versa
-## 1 - Map para Object
-    const mapa = new Map([
-        ["chave1", "valor1"],
-        ["chave2", "valor2"]
-    ]);
+```js
+statusPedidos.clear();
+```
 
-    const obj = Object.fromEntries(mapa);
-    console.log(obj); // { chave1: "valor1", chave2: "valor2" }
+Quantidade de entradas:
 
-## 2 - Object para Map
-    const obj = { chave1: "valor1", chave2: "valor2" };
+```js
+console.log(statusPedidos.size);
+```
 
-    const mapa = new Map(Object.entries(obj));
-    console.log(mapa); // Map { "chave1" => "valor1", "chave2" => "valor2" }
+---
 
-    
+# 6 - Chaves de qualquer tipo
+
+Diferente de objetos comuns, `Map` permite usar objetos como chave.
+
+```js
+const usuario = {
+    id: 1,
+    nome: "Nícolas"
+};
+
+const sessoes = new Map();
+
+sessoes.set(usuario, "sessao_abc");
+
+console.log(sessoes.get(usuario)); // "sessao_abc"
+```
+
+Isso pode ser útil em caches, controle de estado e estruturas internas.
+
+---
+
+# 7 - Iterando um Map
+
+Com `for...of`:
+
+```js
+const statusPedidos = new Map([
+    ["aberto", "Pedido em aberto"],
+    ["pago", "Pedido pago"]
+]);
+
+for (const [chave, valor] of statusPedidos) {
+    console.log(chave, valor);
+}
+```
+
+Com `forEach`:
+
+```js
+statusPedidos.forEach(function(valor, chave) {
+    console.log(chave, valor);
+});
+```
+
+Também existem:
+
+```js
+statusPedidos.keys();
+statusPedidos.values();
+statusPedidos.entries();
+```
+
+---
+
+# 8 - Exemplo prático completo
+
+```js
+const mensagensStatus = new Map([
+    ["pendente", "Aguardando pagamento"],
+    ["pago", "Pagamento confirmado"],
+    ["enviado", "Pedido enviado"],
+    ["cancelado", "Pedido cancelado"]
+]);
+
+function obterMensagemStatus(status) {
+    return mensagensStatus.get(status) ?? "Status desconhecido";
+}
+
+console.log(obterMensagemStatus("pago")); // "Pagamento confirmado"
+console.log(obterMensagemStatus("x")); // "Status desconhecido"
+```
+
+Esse exemplo usa `Map` como tabela de consulta.
+
+É uma alternativa mais organizada do que vários `if` quando a regra é apenas mapear uma chave para um valor.
+
+---
+
+# 9 - Erros comuns
+
+### Usar propriedade como se fosse objeto
+
+```js
+const mapa = new Map();
+
+mapa.nome = "Nícolas";
+```
+
+Isso não adiciona uma entrada no Map.
+
+Use:
+
+```js
+mapa.set("nome", "Nícolas");
+```
+
+### Usar Map para entidade simples
+
+```js
+const usuario = new Map([
+    ["nome", "Nícolas"],
+    ["idade", 20]
+]);
+```
+
+Para esse caso, objeto literal é mais claro.
+
+### Esquecer que chaves de objeto dependem da mesma referência
+
+```js
+const mapa = new Map();
+
+mapa.set({ id: 1 }, "valor");
+
+console.log(mapa.get({ id: 1 })); // undefined
+```
+
+Os dois objetos têm o mesmo conteúdo, mas são referências diferentes.
+
+---
+
+# 10 - Relação com outros estudos
+
+Map se conecta com objetos, arrays, memória e estruturas de dados.
+
+Antes de usar `Map`, vale dominar objetos comuns, porque eles continuam sendo a estrutura mais usada para representar dados em JavaScript.
+
+---
+
+# 11 - Conclusão
+
+`Map` é útil quando precisamos de uma coleção dinâmica de chave e valor.
+
+Ele não substitui objetos comuns em todos os casos. A decisão prática é simples: objeto para dados estruturados de uma entidade, `Map` para coleção de pares chave-valor com operações frequentes de busca, inserção, remoção e iteração.

@@ -1,8 +1,14 @@
-# Funções em JavaScript
+# Funções básicas em JavaScript
 
-Funções são blocos de código reutilizáveis que executam uma tarefa específica.
+Funções são blocos de código reutilizáveis que executam uma tarefa.
 
-Elas permitem organizar o código, evitar repetição e separar responsabilidades.
+Elas ajudam a organizar o código, evitar repetição e separar responsabilidades. Em projetos reais, funções aparecem em validações, cálculos, eventos, requisições, componentes, serviços e regras de negócio.
+
+---
+
+# 1 - O que é uma função
+
+Uma função é um bloco de código que pode ser criado uma vez e executado várias vezes.
 
 Exemplo:
 
@@ -10,15 +16,24 @@ Exemplo:
 function saudacao() {
     console.log("Olá");
 }
-````
 
-Nesse exemplo, foi criada uma função chamada `saudacao`.
+saudacao();
+```
+
+Nesse exemplo:
+
+- `function` declara a função;
+- `saudacao` é o nome da função;
+- o bloco `{}` contém o código executado;
+- `saudacao()` chama a função.
+
+Criar uma função não executa ela automaticamente. Ela só roda quando é chamada.
 
 ---
 
-# 1. Por que usar funções?
+# 2 - Por que funções existem
 
-Sem funções:
+Sem funções, o código fica repetitivo.
 
 ```js
 console.log("Bem-vindo");
@@ -38,133 +53,119 @@ mostrarMensagem();
 mostrarMensagem();
 ```
 
-A função evita repetição e facilita manutenção.
+Se a mensagem precisar mudar, basta alterar em um único lugar.
 
-Se precisar alterar a mensagem, basta mudar em um único lugar.
+Funções existem para:
 
----
-
-# 2. Criando uma função
-
-Sintaxe:
-
-```js
-function nomeDaFuncao() {
-    // código
-}
-```
-
-Exemplo:
-
-```js
-function dizerOla() {
-    console.log("Olá");
-}
-```
-
-Criar a função não executa ela automaticamente.
+- evitar repetição;
+- dar nome a uma regra;
+- organizar responsabilidades;
+- facilitar manutenção;
+- facilitar testes;
+- dividir problemas grandes em partes menores.
 
 ---
 
-# 3. Chamando uma função
+# 3 - Parâmetros e argumentos
 
-Para executar uma função, é necessário chamá-la.
+Parâmetros são variáveis declaradas na função.
 
-Exemplo:
+Argumentos são os valores enviados na chamada.
 
 ```js
-function dizerOla() {
-    console.log("Olá");
+function saudar(nome) {
+    console.log(`Olá, ${nome}`);
 }
 
-dizerOla();
+saudar("Nícolas");
+saudar("Ana");
 ```
 
-Resultado:
+Nesse exemplo:
 
-```txt
-Olá
-```
+- `nome` é o parâmetro;
+- `"Nícolas"` e `"Ana"` são argumentos.
 
-Os parênteses executam a função.
-
-Sem eles:
+Funções podem receber mais de um parâmetro.
 
 ```js
-dizerOla
-```
+function somar(a, b) {
+    return a + b;
+}
 
-A função não será executada.
+console.log(somar(2, 3)); // 5
+```
 
 ---
 
-# 4. Parâmetros
+# 4 - Retorno de função
 
-Parâmetros são valores que a função recebe.
-
-Exemplo:
+O `return` define o valor que a função devolve.
 
 ```js
-function cumprimentar(nome) {
-    console.log("Olá, " + nome);
+function calcularTotal(preco, quantidade) {
+    return preco * quantidade;
 }
+
+const total = calcularTotal(20, 3);
+
+console.log(total); // 60
 ```
 
-Chamando:
+Sem `return`, a função retorna `undefined`.
 
 ```js
-cumprimentar("Ana");
+function mostrarNome(nome) {
+    console.log(nome);
+}
+
+const resultado = mostrarNome("Nícolas");
+
+console.log(resultado); // undefined
 ```
 
-Resultado:
-
-```txt
-Olá, Ana
-```
-
-`nome` existe apenas dentro da função.
+Use `return` quando a função precisa entregar um resultado para outro ponto do código.
 
 ---
 
-# 5. Mais de um parâmetro
+# 5 - Funções com responsabilidade clara
 
-Uma função pode receber vários parâmetros.
+Uma função deve ter uma intenção fácil de entender.
 
-Exemplo:
+Exemplo ruim:
 
 ```js
-function apresentar(nome, idade) {
-    console.log(nome + " tem " + idade + " anos");
+function processar(usuario) {
+    console.log(usuario.nome);
+    usuario.ativo = true;
+    return usuario.idade >= 18;
 }
 ```
 
-Chamando:
+Essa função faz coisas demais: imprime, altera objeto e valida idade.
+
+Versão melhor:
 
 ```js
-apresentar("Carlos", 25);
+function ativarUsuario(usuario) {
+    return {
+        ...usuario,
+        ativo: true
+    };
+}
+
+function usuarioMaiorDeIdade(usuario) {
+    return usuario.idade >= 18;
+}
 ```
 
-Resultado:
-
-```txt
-Carlos tem 25 anos
-```
-
-A ordem importa.
-
-```js
-apresentar(25, "Carlos");
-```
-
-Resultado incorreto.
+Funções pequenas e claras são mais fáceis de ler, testar e manter.
 
 ---
 
-# 6. Retorno
+# 6 - Function declaration e function expression
 
-Funções podem devolver valores usando `return`.
-
-Exemplo:
+Function declaration:
 
 ```js
 function somar(a, b) {
@@ -172,193 +173,166 @@ function somar(a, b) {
 }
 ```
 
-Uso:
+Function expression:
 
 ```js
-const resultado = somar(10, 5);
-
-console.log(resultado);
-```
-
-Resultado:
-
-```txt
-15
-```
-
-Sem `return`, a função não devolve valor útil.
-
----
-
-# 7. Diferença entre console.log e return
-
-Com `console.log`:
-
-```js
-function somar(a, b) {
-    console.log(a + b);
-}
-```
-
-Isso apenas exibe o valor.
-
-Com `return`:
-
-```js
-function somar(a, b) {
+const somar = function(a, b) {
     return a + b;
-}
+};
 ```
 
-Agora o valor pode ser armazenado, reutilizado ou manipulado.
+As duas criam funções, mas possuem diferenças de hoisting.
 
-Exemplo:
+Na prática, para funções comuns nomeadas, `function nome()` é simples e legível. Para funções usadas como valor, callback ou configuração, function expression também aparece bastante.
+
+---
+
+# 7 - Arrow functions
+
+Arrow function é uma sintaxe mais curta para escrever funções.
 
 ```js
-const total = somar(10, 5) * 2;
+const somar = (a, b) => {
+    return a + b;
+};
+```
+
+Quando há apenas uma expressão, o retorno pode ser implícito.
+
+```js
+const somar = (a, b) => a + b;
+```
+
+Muito comum em métodos de array:
+
+```js
+const numeros = [1, 2, 3];
+
+const dobrados = numeros.map((numero) => numero * 2);
+
+console.log(dobrados); // [2, 4, 6]
+```
+
+Arrow functions têm diferença importante em relação ao `this`. Esse ponto é aprofundado em `Frontend/estudos/javascript/documentos-de-estudo/secao-05-funcoes/2 - Funções avançado.md`.
+
+---
+
+# 8 - Callbacks
+
+Callback é uma função passada como argumento para outra função.
+
+```js
+function executar(callback) {
+    callback();
+}
+
+executar(function() {
+    console.log("Executou depois");
+});
+```
+
+Callbacks aparecem muito em:
+
+- eventos;
+- timers;
+- métodos de array;
+- código assíncrono;
+- bibliotecas.
+
+Exemplo com array:
+
+```js
+const nomes = ["Ana", "Carlos", "Marina"];
+
+nomes.forEach(function(nome) {
+    console.log(nome);
+});
 ```
 
 ---
 
-# 8. Funções sem retorno
-
-Nem toda função precisa retornar algo.
-
-Exemplo:
+# 9 - Exemplo prático completo
 
 ```js
-function mostrarMensagem() {
-    console.log("Operação concluída");
+function calcularTotalItens(itens) {
+    return itens.reduce(function(total, item) {
+        return total + item.preco * item.quantidade;
+    }, 0);
 }
+
+function criarResumoPedido(cliente, itens) {
+    const total = calcularTotalItens(itens);
+
+    return {
+        cliente,
+        quantidadeItens: itens.length,
+        total
+    };
+}
+
+const itens = [
+    { nome: "Arroz", preco: 20, quantidade: 2 },
+    { nome: "Feijão", preco: 12, quantidade: 1 }
+];
+
+const resumo = criarResumoPedido("Nícolas", itens);
+
+console.log(resumo);
 ```
 
-Ela apenas executa uma ação.
+Esse exemplo separa responsabilidades:
+
+- uma função calcula o total;
+- outra monta o resumo do pedido.
 
 ---
 
-# 9. Valores padrão
+# 10 - Erros comuns
 
-Parâmetros podem ter valores padrão.
-
-Exemplo:
+### Criar função com nome genérico
 
 ```js
-function cumprimentar(nome = "Visitante") {
-    console.log("Olá, " + nome);
+function executar(dados) {
+    return dados.valor * 2;
 }
 ```
 
-Chamando:
+Prefira nomes que expliquem a intenção.
 
 ```js
-cumprimentar();
-```
-
-Resultado:
-
-```txt
-Olá, Visitante
-```
-
----
-
-# 10. Escopo
-
-Variáveis criadas dentro da função só existem nela.
-
-Exemplo:
-
-```js
-function teste() {
-    const nome = "Ana";
-}
-
-console.log(nome);
-```
-
-Isso gera erro.
-
-Porque `nome` só existe dentro da função.
-
----
-
-# 11. Função com lógica simples
-
-Exemplo:
-
-```js
-function verificarIdade(idade) {
-    if (idade >= 18) {
-        return "Maior de idade";
-    }
-
-    return "Menor de idade";
+function calcularValorDobrado(valor) {
+    return valor * 2;
 }
 ```
 
-Uso:
+### Esquecer o return
 
 ```js
-console.log(verificarIdade(20));
-```
-
-Resultado:
-
-```txt
-Maior de idade
-```
-
----
-
-# 12. Boas práticas
-
-## Use nomes claros
-
-Ruim:
-
-```js
-function x() {
+function somar(a, b) {
+    a + b;
 }
+
+console.log(somar(2, 3)); // undefined
 ```
 
-Melhor:
+### Fazer função grande demais
 
-```js
-function calcularTotal() {
-}
-```
+Se a função valida, altera, salva, renderiza e envia dados, provavelmente ela precisa ser dividida.
 
 ---
 
-## Uma função, uma responsabilidade
+# 11 - Relação com outros estudos
 
-Ruim:
+Funções se conectam com arrays, porque métodos como `map`, `filter`, `find` e `reduce` recebem funções.
 
-```js
-function fazerTudo() {
-}
-```
+Também se conectam com assincronismo, porque callbacks, Promises e `async/await` dependem da ideia de passar e retornar funções.
 
-Melhor:
-
-```js
-calcularPreco()
-validarUsuario()
-enviarEmail()
-```
+Antes de avançar para funções avançadas, vale dominar parâmetros, retorno, callbacks e responsabilidade clara.
 
 ---
 
-## Prefira funções pequenas
+# 12 - Conclusão
 
-Funções muito grandes dificultam leitura e manutenção.
+Funções são uma das ferramentas mais importantes para escrever código organizado.
 
----
-
-# Conclusão
-
-Funções são fundamentais em JavaScript.
-
-Elas permitem reutilizar código, organizar responsabilidades e tornar a aplicação mais legível.
-
-Entender criação, parâmetros, retorno e escopo é a base para trabalhar com funções mais avançadas futuramente.
+Elas permitem transformar regras soltas em blocos nomeados, reutilizáveis e fáceis de manter. Em código profissional, uma boa função não é apenas uma função que funciona, mas uma função com responsabilidade clara.

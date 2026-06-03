@@ -1,493 +1,356 @@
-    ```js
-# . 1. O que é um objeto?
-## 1 - Conceito
-    uma estrutura que armazena dados organizados em pares de chaves e valor.
-    ele representa "coisas do mundo real" no código.
+# Objetos em JavaScript
 
-## 2 - Exemplo simples
-    const pessoa = {
-        nome: "Nícolas",
-        idade: 20,
-        status: true
-    }    
-    
-# ________________________________________________________________________________
+Objetos são estruturas usadas para representar dados organizados em pares de chave e valor.
 
-# . 2. Como criar objetos
-## 1 - Literal (mais comum)
-    const carro = {
-        marca: "Toyota",
-        modelo: "Corolla",
-        ano: 2022
-    };
+Eles são uma das bases do JavaScript moderno, porque aparecem em praticamente tudo: dados de API, configurações, estados de tela, entidades de negócio, parâmetros de funções e estruturas internas da linguagem.
 
-    ✔ O que acontece aqui
-        Cria um objeto direto
-        Já aponta para Object.prototype
-        Simples e rápido
-        Mais usado em 90% dos casos reais
+---
 
-    ✔ Quando usar
-        objetos simples
-        DTOs (dados)
-        configs
-        estruturas fixas
+# 1 - O que é um objeto
 
-    ✔ Vantagens
-        legível
-        rápido de escrever
-        padrão da indústria
+Um objeto guarda informações usando propriedades.
 
-    ❌ Limitação
-        não escala bem para múltiplas instâncias com lógica compartilhada (sem organização extra)
+Cada propriedade possui:
 
-## 2 - Usando new Object()
-    const carro = new Object();
-    carro.marca = "Toyota";
-    carro.modelo = "Corolla";
+- uma chave;
+- um valor.
 
-    ✔ O que acontece
-        É literalmente isso:
+Exemplo:
 
-        const pessoa = {};
+```js
+const pessoa = {
+    nome: "Nícolas",
+    idade: 20,
+    ativo: true
+};
+```
 
-    ✔ Diferença real
-        Nenhuma prática.
+Nesse exemplo:
 
-    ❌ Problema
-        verboso
-        sem vantagem
-        menos legível
+- `nome` é uma chave;
+- `"Nícolas"` é o valor dessa chave;
+- `idade` guarda um número;
+- `ativo` guarda um booleano.
 
-    ✔ Quando usar
-        praticamente nunca (só legado ou teoria)
+Na prática, objetos ajudam a representar uma coisa com várias características.
 
-## 3 - Função construtora
-    function Pessoa(nome, idade) {
-        this.nome = nome;
-        this.idade = idade;
+---
+
+# 2 - Por que objetos existem
+
+Sem objetos, seria necessário criar várias variáveis soltas.
+
+```js
+const nomeUsuario = "Nícolas";
+const idadeUsuario = 20;
+const emailUsuario = "nicolas@email.com";
+```
+
+Com objeto:
+
+```js
+const usuario = {
+    nome: "Nícolas",
+    idade: 20,
+    email: "nicolas@email.com"
+};
+```
+
+O objeto mantém dados relacionados dentro da mesma estrutura.
+
+Isso facilita:
+
+- organizar informações;
+- passar dados para funções;
+- enviar dados para APIs;
+- receber respostas do backend;
+- modelar entidades reais;
+- evitar muitas variáveis soltas.
+
+---
+
+# 3 - Criando objetos
+
+A forma mais comum é usar objeto literal.
+
+```js
+const produto = {
+    nome: "Arroz",
+    preco: 20,
+    ativo: true
+};
+```
+
+Também existe `new Object()`, mas quase nunca é usado em código moderno.
+
+```js
+const produto = new Object();
+
+produto.nome = "Arroz";
+produto.preco = 20;
+```
+
+O resultado prático é parecido, mas a versão literal é mais simples e mais legível.
+
+---
+
+# 4 - Acessando propriedades
+
+Existem duas formas principais.
+
+Com ponto:
+
+```js
+const usuario = {
+    nome: "Nícolas"
+};
+
+console.log(usuario.nome); // "Nícolas"
+```
+
+Com colchetes:
+
+```js
+const usuario = {
+    nome: "Nícolas"
+};
+
+console.log(usuario["nome"]); // "Nícolas"
+```
+
+Use ponto quando o nome da propriedade é fixo.
+
+Use colchetes quando a propriedade vem de uma variável.
+
+```js
+const campo = "nome";
+
+const usuario = {
+    nome: "Nícolas"
+};
+
+console.log(usuario[campo]); // "Nícolas"
+```
+
+---
+
+# 5 - Alterando e adicionando propriedades
+
+Objetos podem ser alterados depois de criados, quando declarados com `const`.
+
+```js
+const usuario = {
+    nome: "Nícolas"
+};
+
+usuario.idade = 20;
+usuario.nome = "Nicolas";
+
+console.log(usuario);
+```
+
+`const` impede reatribuir a variável, mas não impede alterar o conteúdo do objeto.
+
+```js
+const usuario = {
+    nome: "Nícolas"
+};
+
+usuario.nome = "Ana"; // permitido
+
+usuario = {}; // erro
+```
+
+---
+
+# 6 - Métodos em objetos
+
+Quando uma propriedade guarda uma função, ela é chamada de método.
+
+```js
+const usuario = {
+    nome: "Nícolas",
+    saudacao: function() {
+        return `Olá, meu nome é ${this.nome}`;
     }
+};
 
-    const p1 = new Pessoa("Nícolas", 20);
+console.log(usuario.saudacao());
+```
 
-    🧠 O que o new faz aqui?
+Dentro de métodos, `this` geralmente representa o objeto que chamou a função.
 
-    Ele executa:
+Esse assunto é aprofundado em `Frontend/estudos/javascript/documentos-de-estudo/secao-09-orientacao-objetos/3 - this, bind, call e apply.md`.
 
-    const p1 = {};
-    p1.__proto__ = Pessoa.prototype;
-    Pessoa.call(p1, "Nícolas");
-    return p1;
-    
-    ✔ Características
-        cria múltiplas instâncias
-        permite "herança via prototype"
-        base do JS antigo (pré-ES6)
+---
 
-    ✔ Quando usar
-        código legado
-        libs antigas
-        quando quer controle explícito de prototype
+# 7 - Desestruturação de objetos
 
-    ❌ Problemas
-        fácil esquecer new → bug silencioso
-        menos legível que classes
-        mais "baixo nível"
-        
-        Exemplo de bug clássico:
-        const p1 = Pessoa("Nícolas"); // sem new
+Desestruturação permite extrair propriedades para variáveis.
 
-        👉 this vira undefined (ou global no modo antigo)
+```js
+const usuario = {
+    nome: "Nícolas",
+    idade: 20
+};
 
-## 4 - ES6 Class (mais moderno)
-    class Pessoa {
-        constructor(nome, idade) {
-            this.nome = nome;
-            this.idade = idade;
-        }
-    }
+const { nome, idade } = usuario;
 
-    Pessoa.prototype.falar = function () {};
+console.log(nome); // "Nícolas"
+console.log(idade); // 20
+```
 
-    const p1 = new Pessoa("Nícolas", 20);
+Isso é muito comum em React, funções e consumo de APIs.
 
-    O que realmente é uma classe no JS?
-        👉 !!! IMPORTANTE -> SÓ açúcar sintático (syntactic sugar)
+Também é possível renomear:
 
-    ✔ Vantagens
-        mais legível
-        padrão moderno
-        mais seguro (obriga new)
-        estrutura mais clara
+```js
+const produto = {
+    nome: "Arroz"
+};
 
-    ✔ Quando usar
-        praticamente sempre em projetos modernos
-        Angular, React, Node (em partes OO)
-        modelos de domínio
+const { nome: nomeProduto } = produto;
 
-    ❌ Limitações
-        não é "real OOP clássico"
-        continua sendo prototype por baixo
-        não resolve tudo (JS não é Java/C#)
+console.log(nomeProduto); // "Arroz"
+```
 
-🧠 Comparação direta
-Forma	        Uso atual	    Performance     Legibilidade	Escalabilidade
-{} literal	    ⭐⭐⭐⭐⭐	⭐⭐⭐⭐⭐    ⭐⭐⭐⭐⭐	  ⭐⭐
-new Object()	❌	          ⭐⭐⭐⭐      ⭐	           ⭐
-function + new	⚠️legado       ⭐⭐⭐⭐      ⭐⭐            ⭐⭐⭐⭐
-class	        ⭐⭐⭐⭐⭐	⭐⭐⭐⭐	  ⭐⭐⭐⭐⭐	   ⭐⭐⭐⭐⭐
+---
 
-# ________________________________________________________________________________
+# 8 - Spread operator em objetos
 
-# . 3. Acessando propriedades
-## 1 - Notação ponto
-    pessoa.nome
+O spread (`...`) permite copiar propriedades de um objeto para outro.
 
-## 2 - Notação colchetes
-    pessoa["idade"];
+```js
+const usuario = {
+    nome: "Nícolas",
+    idade: 20
+};
 
-    - útil quando a chave é dinâmica
+const usuarioAtualizado = {
+    ...usuario,
+    idade: 21
+};
 
-    const chave = "nome";
-    pessoa[chave];
+console.log(usuarioAtualizado);
+```
 
-# ________________________________________________________________________________
+Isso é útil para criar uma nova versão do objeto sem alterar diretamente o original.
 
-# . 4. Modificar objetos
-## 1 - Alterando propriedades
-    pessoa.idade = 21;
-    pessoa.status = false;
+Em React e em código moderno, esse padrão aparece bastante.
 
-# ________________________________________________________________________________
+---
 
-# . 5. Adicionar propriedades
-## 1 - Adicionando novas propriedades
-    pessoa.profissao = "dev";
+# 9 - Objetos e referências
 
-# ________________________________________________________________________________
+Objetos são tipos por referência.
 
-# . 6. Remover propriedades
-## 1 - Usando delete
-    delete pessoa.status;
+```js
+const usuario1 = {
+    nome: "Nícolas"
+};
 
-# ________________________________________________________________________________
+const usuario2 = usuario1;
 
-# . 7. Métodos (funções dentro de objetos)
-## 1 - Forma clássica
-    const pessoa = {
+usuario2.nome = "Ana";
+
+console.log(usuario1.nome); // "Ana"
+```
+
+Isso acontece porque `usuario1` e `usuario2` apontam para o mesmo objeto na memória.
+
+Para criar uma cópia simples:
+
+```js
+const usuario1 = {
+    nome: "Nícolas"
+};
+
+const usuario2 = {
+    ...usuario1
+};
+
+usuario2.nome = "Ana";
+
+console.log(usuario1.nome); // "Nícolas"
+```
+
+Esse assunto se conecta com `Frontend/estudos/javascript/documentos-de-estudo/secao-07-memoria/1 - Memória.md`.
+
+---
+
+# 10 - Exemplo prático completo
+
+```js
+const pedido = {
+    id: 10,
+    cliente: {
         nome: "Nícolas",
-        falar: function () {
-            console.log("Olá!");
-        }
-    };
+        cidade: "São Paulo"
+    },
+    itens: [
+        { produto: "Arroz", preco: 20 },
+        { produto: "Feijão", preco: 12 }
+    ]
+};
 
-    pessoa.falar();
+const total = pedido.itens.reduce(function(acumulador, item) {
+    return acumulador + item.preco;
+}, 0);
 
-## 2 - Forma moderna
-    const pessoa = {
-        nome: "Nícolas",
-        falar() {
-            console.log("Olá!");
-        }
-    };
+console.log(pedido.cliente.nome);
+console.log(total);
+```
 
-# ________________________________________________________________________________
+Esse exemplo mostra um formato muito comum em APIs: objetos contendo outros objetos e arrays.
 
-# . 8. this dentro de objetos
-## 1 - Referência ao objeto
-    this refere-se ao próprio objeto.
+---
 
-    const pessoa = {
-        nome: "Nícolas",
-        falar() {
-            console.log(this.nome);
-        }
-    };
+# 11 - Erros comuns
 
-    pessoa.falar(); // Nícolas
+### Comparar objetos pelo conteúdo
 
-# ________________________________________________________________________________
+```js
+console.log({ id: 1 } === { id: 1 }); // false
+```
 
-# . 9. Objetos aninhados
-## 1 - Objetos dentro de objetos
-    const usuario = {
-        nome: "Nícolas",
-        endereco: {
-            cidade: "Criciúma",
-            estado: "SC"
-        }
-    };
-
-    console.log(usuario.endereco.cidade);
-
-# ________________________________________________________________________________
-
-# . 10. Arrays dentro de objetos
-## 1 - Estrutura mista
-    const aluno = {
-        nome: "Nícolas",
-        notas: [10, 8, 9]
-    };
-
-# ________________________________________________________________________________
-
-# . 11. Desestruturação
-## 1 - Extraindo valores do objeto
-    const pessoa = {
-        nome: "Nícolas",
-        idade: 20
-    };
-
-    const { nome, idade } = pessoa;
-
-    console.log(nome);
-
-# ________________________________________________________________________________
+Mesmo parecidos, são objetos diferentes na memória.
 
-# . 12. Spread operator
-## 1 - Copiando e expandindo objetos
-    const p1 = {
-        nome: "Nícolas",
-        idade: 20
-    };
+### Alterar objeto original sem perceber
 
-    const p2 = {
-        ...p1,
-        cidade: "Criciúma"
-    };
+```js
+const usuario = {
+    nome: "Nícolas"
+};
 
-# ________________________________________________________________________________
+function alterarNome(dados) {
+    dados.nome = "Ana";
+}
 
-# . 13. Object methods úteis
-## 1 - Object.keys()
-    retorna as chaves
+alterarNome(usuario);
 
-    Object.keys(pessoa);
+console.log(usuario.nome); // "Ana"
+```
 
-## 2 - Object.values()
-    retorna os valores
+Quando isso for um problema, crie uma cópia antes.
 
-    Object.values(pessoa);
+### Criar objetos grandes demais sem responsabilidade clara
 
-## 3 - Object.entries()
-    retorna pares [chave, valor]
+Objetos muito grandes e genéricos dificultam manutenção.
 
-    Object.entries(pessoa);
+Prefira estruturas com nomes claros e dados relacionados.
 
-## 4 - Object.freeze()
-    trava o objeto, tornando impossível modificá-lo
+---
 
-## 5 - Object.getOwnPropertyDescriptor()
-    pega todas as propriedades do atributo
+# 12 - Relação com outros estudos
 
-    Object.getOwnPropertyDescriptor(obj, 'atributo');
+Objetos se conectam com arrays, memória, funções, `this`, classes e prototypes.
 
-## 6 - Object.setPrototypeOf()
-    seta o prototype do objB igual ao objeto objA
+Antes de estudar classes e prototypes, é importante dominar objetos, porque esses assuntos partem da ideia de propriedades, métodos e referência.
 
-    Object.setPrototypeOf(objB, objA)
+---
 
-## 7 - Object.getPrototypeOf()
-    pega o prototype do objeto
+# 13 - Conclusão
 
-    Object.getPrototypeOf(objB)
+Objetos são a principal forma de representar dados estruturados em JavaScript.
 
-## 8 - Object.defineProperty() e Object.defineProperties()
-    function Produto(nome, preco, estoque) {
-        Object.defineProperty(this, 'estoque', {
-            enumerable: true, // mostra a chave
-            configurable: true // configurável
-            get: function () {
-                return estoque;
-            },
-            set: function (valor) {
-                if (typeof valor !== "number") {
-                    console.log("informe um número");
-                    return;
-                }
-
-                estoque = valor;
-            } 
-        });
-
-        Object.defineProperties(this, {
-            nome: {
-                enumerable: true, // mostra a chave
-                value: nome, // valor
-                writable: true, // pode alterar
-                configurable: true // configurável
-            },
-            preco: {
-                enumerable: true, // mostra a chave
-                value: preco, // valor
-                writable: true, // pode alterar
-                configurable: true // configurável
-            },
-        });
-    }
-
-    const p1 = new Produto("camisa", 10.99, 5);
-    console.log(p1);
-
-# ________________________________________________________________________________
-
-# . 14. Comparação de objetos
-## 1 - Comparação por referência
-    Objetos não são comparados por valor, mas por referência.
-
-    const a = { nome: "A" };
-    const b = { nome: "A" };
-
-    console.log(a === b); // false
-
-    Mesmo conteúdo, mas objetos diferentes na memória.
-
-# ________________________________________________________________________________
-
-# . 15. Cópia de objetos
-## 1 - Cópia rasa (shallow copy)
-    const novo = { ...pessoa };
-
-    ou:
-
-    const novo = Object.assign({}, pessoa);
-
-## 2 - Cópia profunda (deep copy)
-    const novo = JSON.parse(JSON.stringify(pessoa));
-
-    limitações existem (funções, datas etc.)
-
-## 3 - Limitações do Shadowing e Prototype Lookup
-    1. Performance imprevisível
-
-    Quando você acessa:
-
-    obj.x
-
-    JS pode precisar subir:
-
-    obj → proto → proto → proto → null
-
-    - quanto maior a cadeia, mais lenta a busca
-
-    2. Debug difícil
-
-    Exemplo:
-
-    const pai = { nome: "pai" };
-    const filho = Object.create(pai);
-
-    console.log(filho.nome);
-
-    Você vê "pai", mas:
-
-    - não existe em filho
-
-    Isso confunde bastante iniciantes e até dev experiente em debug.
-
-    3. Sobrescrita acidental (shadowing bug)
-    const pai = {
-        idade: 50
-    };
-
-    const filho = Object.create(pai);
-
-    filho.idade = 20;
-
-    Agora:
-
-    filho.idade → 20
-    pai.idade → 50
-
-    - parece ok, mas pode quebrar lógica compartilhada
-
-    4. Alteração do prototype afeta tudo
-    Object.prototype.teste = 123;
-
-    - isso "vaza" para TODOS os objetos
-
-    Isso é perigoso e considerado má prática.
-
-    5. Inconsistência de estado
-
-    Como propriedades podem vir de níveis diferentes:
-
-    obj.a // próprio
-    obj.b // herdado
-    obj.c // herdado de outro nível
-
-    - fica difícil garantir "onde está a verdade do dado"
-
-    6. Problema em loops
-    for (let key in obj) {
-        console.log(key);
-    }
-
-    - ele percorre também propriedades do prototype
-
-    (precisa de hasOwnProperty)
-
-# ________________________________________________________________________________
-
-# . 16. Propriedades dinâmicas
-## 1 - Chaves dinâmicas
-    const chave = "idade";
-
-    const pessoa = {
-        nome: "Nícolas",
-        [chave]: 20
-    };
-
-# ________________________________________________________________________________
-
-# . 17. Objetos são dinâmicos
-## 1 - Mudanças em runtime
-    Você pode mudar tudo em runtime:
-
-    const obj = {};
-
-    obj.a = 1;
-    obj.b = 2;
-    delete obj.a;
-
-# ________________________________________________________________________________
-
-# . 18. Quando usar objetos
-## 1 - Casos de uso
-    Use objetos quando precisar representar:
-
-    - entidades (usuário, produto, carro)
-    - agrupamento de dados
-    - configurações
-    - estruturas complexas
-
-# ________________________________________________________________________________
-
-# . 19. Objetos primitivos (wrapper)
-## 1 - Wrapper objects
-    const n = new Number(123);
-
-    tipo: "object"
-    contém o valor primitivo dentro dele.
-
-    console.log(n + 1); // 124
-
-    o JS faz conversão automática (auto-unboxing), 
-    pegando esse valor primitido dentro do objeto
-
-## 2 - Comparação
-    const a = new Number(123);
-    const b = new Number(123);
-
-    a === b // false
-    - são dois objetos diferentes na memória
-
-## 3 - ❗ NUNCA UTILIZAR new Number, new String, new Boolean
-    apenas para referência, quando fazemos algo como
-    "abc".toUpperCase();
-
-    o JS cria um wrapper temporário
-    para permitir o uso de métodos, e depois descarta
-    new String("abc").toUpperCase();
-
-# ________________________________________________________________________________
+Dominar objetos é essencial para entender respostas de API, estado de aplicações, componentes React, configurações, entidades de negócio e praticamente qualquer código JavaScript real.

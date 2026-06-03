@@ -1,303 +1,341 @@
-    ```js
-# . 1 - Maneiras de escrever funções 
-## 1 - Função normal (function)
-  Tem o próprio this
-  O valor do this depende de como a função é chamada
-  
-  const obj = {
+# Funções avançadas em JavaScript
+
+Depois de entender funções básicas, o próximo passo é estudar como funções se comportam como valores, como lidam com escopo, como mantêm contexto e como são usadas em código moderno.
+
+Esses conceitos aparecem bastante em callbacks, eventos, React, APIs, closures, métodos de array e orientação a objetos.
+
+---
+
+# 1 - Function declaration, function expression e arrow function
+
+Existem formas diferentes de declarar funções.
+
+Function declaration:
+
+```js
+function somar(a, b) {
+    return a + b;
+}
+```
+
+Function expression:
+
+```js
+const somar = function(a, b) {
+    return a + b;
+};
+```
+
+Arrow function:
+
+```js
+const somar = (a, b) => {
+    return a + b;
+};
+```
+
+Em código moderno, arrow functions são muito comuns em callbacks e funções curtas.
+
+```js
+const numeros = [1, 2, 3];
+const dobrados = numeros.map((numero) => numero * 2);
+```
+
+Mas arrow function não substitui `function` em todos os casos, porque ela não possui `this` próprio.
+
+---
+
+# 2 - Diferença de this entre function e arrow
+
+Funções declaradas com `function` têm `this` dinâmico.
+
+O valor do `this` depende de como a função é chamada.
+
+```js
+const usuario = {
     nome: "Nícolas",
-    falar: function () {
-      console.log(this.nome);
+    falar: function() {
+        console.log(this.nome);
     }
-  };
+};
 
-  obj.falar(); // "Nícolas"
+usuario.falar(); // "Nícolas"
+```
 
-  aqui this aponta para obj
+Arrow functions não têm `this` próprio. Elas herdam o `this` do escopo onde foram criadas.
 
-## 2 - Arrow function (=>)
-  NÃO tem this próprio
-  Ela herda o this do contexto onde foi criada
-  
-  const obj = {
+```js
+const usuario = {
     nome: "Nícolas",
     falar: () => {
-      console.log(this.nome);
+        console.log(this.nome);
     }
-  };
+};
 
-  obj.falar(); // undefined
+usuario.falar(); // undefined em muitos ambientes
+```
 
-  porque o this aqui não é do obj, é do escopo externo
+Regra prática:
 
-  Diferença simples pra gravar
-  function → tem this próprio
-  arrow → herda o this
+- use `function` para métodos que dependem do objeto;
+- use arrow function para callbacks e funções curtas que não precisam de `this` próprio.
 
-  const obj = {
-    nome: "Nícolas",
+Esse assunto se conecta diretamente com `Frontend/estudos/javascript/documentos-de-estudo/secao-09-orientacao-objetos/3 - this, bind, call e apply.md`.
 
-    metodo1: function () {
-      console.log("1:", this.nome);
+---
 
-      const metodo2 = () => {
-        console.log("2:", this.nome);
+# 3 - Funções como valores
 
-        function metodo3() {
-          console.log("3:", this.nome);
+Em JavaScript, funções são valores.
 
-          const metodo4 = () => {
-            console.log("4:", this.nome);
-          };
+Isso significa que uma função pode ser:
 
-          metodo4();
+- armazenada em variável;
+- passada como argumento;
+- retornada por outra função;
+- guardada em objeto;
+- guardada em array.
+
+Exemplo:
+
+```js
+function executar(acao) {
+    acao();
+}
+
+executar(function() {
+    console.log("Executando callback");
+});
+```
+
+Esse comportamento é essencial para entender callbacks, eventos e programação funcional.
+
+---
+
+# 4 - Higher-order functions
+
+Higher-order function é uma função que recebe outra função ou retorna outra função.
+
+Exemplo recebendo função:
+
+```js
+function filtrar(lista, criterio) {
+    const resultado = [];
+
+    lista.forEach(function(item) {
+        if (criterio(item)) {
+            resultado.push(item);
         }
+    });
 
-        metodo3();
-      };
+    return resultado;
+}
 
-      metodo2();
-    }
-  };
+const numeros = [1, 2, 3, 4];
 
-  obj.metodo1();
+const pares = filtrar(numeros, function(numero) {
+    return numero % 2 === 0;
+});
 
-# _________________________________________________________________________
+console.log(pares); // [2, 4]
+```
 
-# . 2 - Closures 
-## 1 - Conceito de escopo léxico
-  escopo léxico é basicamente:
-  uma função enxerga variáveis de onde ela foi criada, não de onde ela é chamada
-  
-  const nome = "global";
+Métodos como `map`, `filter`, `reduce`, `find` e `forEach` são exemplos práticos disso.
 
-  function fora() {
-      const nome = "fora";
+---
 
-      function dentro() {
+# 5 - Escopo léxico
+
+Escopo léxico significa que uma função lembra o local onde foi criada.
+
+```js
+const nome = "global";
+
+function fora() {
+    const nome = "fora";
+
+    function dentro() {
         console.log(nome);
-      }
+    }
 
-      dentro();
-  }
+    dentro();
+}
 
-  fora(); // "fora"
+fora(); // "fora"
+```
 
-  a função dentro pega o nome do lugar onde ela foi definida.
+A função `dentro` acessa a variável `nome` do escopo onde ela foi criada.
 
-## 2 - O que é Closure
-  A habilidade da função de reconhecer seu escopo léxico
+Isso é a base para entender closures.
 
-  closure é quando uma função:
+---
 
-  lembra das variáveis do escopo onde foi criada, mesmo depois desse escopo ter "acabado"
+# 6 - Closures
 
-  exemplo clássico
-  function criarContador() {
-      let contador = 0;
+Closure acontece quando uma função continua acessando variáveis do escopo onde foi criada, mesmo depois que esse escopo já terminou sua execução.
 
-      return function() {
-          contador++;
-          return contador;
-      };
-  }
+```js
+function criarContador() {
+    let contador = 0;
 
-const contar = criarContador();
-
-console.log(contar()); // 1
-console.log(contar()); // 2
-
-criarContador() termina
-normalmente, contador morreria
-MAS... a função retornada mantém acesso a contador
-isso é closure
-
-escopo léxico → define quem pode acessar o quê
-closure → mantém esse acesso vivo na memória
-
--------------------------------------------------------------------------------------------
-
-uso real
-1. encapsulamento (tipo “variável privada”)
- 
-function criarUsuario(nome) {
-    let senha = "123"; // privado
-
-    return {
-        getNome() {
-            return nome;
-        },
-        validarSenha(s) {
-            return s === senha;
-        }
+    return function() {
+        contador += 1;
+        return contador;
     };
 }
 
-const nicolas = criarUsuario("Nícolas");
-console.log(nicolas.validarSenha("123"))
+const incrementar = criarContador();
 
-ninguém acessa senha direto — só via função
+console.log(incrementar()); // 1
+console.log(incrementar()); // 2
+console.log(incrementar()); // 3
+```
 
-2. evitar variável global (organização)
-function init() {
-    let config = { api: "url" };
+Mesmo depois de `criarContador` terminar, a função retornada ainda lembra da variável `contador`.
 
-    function getConfig() {
-        return config;
-    }
+Na prática, closures são usadas para:
 
-    return { getConfig };
-}
+- encapsular estado;
+- criar funções configuradas;
+- preservar dados entre chamadas;
+- implementar módulos;
+- trabalhar com callbacks.
 
-console.log(init().getConfig())
+---
 
-3. callbacks e async 
-function executar() {
-    let valor = 10;
+# 7 - Currying e funções configuradas
 
-    setTimeout(function() {
-        console.log(valor);
-    }, 1000);
-}
+Uma função pode retornar outra função já configurada.
 
-mesmo depois da função acabar, o setTimeout ainda acessa valor
-
-isso é closure em ação.
-
-# _________________________________________________________________________
-
-# . 3 - Tipos de funções
-## 1 - Funções de callback 
-  Funções passadas como argumento que outras funções manipulam ela como parâmetro.
-  no JavaScript, funções são objetos e podem ser declaradas em basicamente qualquer lugar do código.
-
-  exemplo:
-  function executaCallback(fcallback) {
-    fcallback();
-  }
-
-  executaCallback(function () {
-    console.log("essa função está sendo passada como callback");
-  });
-
-  ou 
-
-  function f1 () {
-    console.log("essa função está sendo passada como callback");
-  }
-
-  executaCallback(f1);
-
-## 2 - Funções imediatas (IIFE)
-  Funções anônimas executadas logo após sua criação:
-  São úteis para não poluir o escopo global com funções.
-
-  (function () {
-    const nome = "Nícolas"; // essa variável não afeta a variável "nome" no escopo global.
-    console.log("Essa função está sendo executada");
-  })();
-
-  const nome = "Teste";
-
-## 3 - Funções fábrica (Factory Functions) 
-  são funções que retornam objetos prontos, sem usar new.
-  ideia: você chama a função e ela fabrica um objeto pra você.
-  usa quando o intuito é criar objetos de forma simples e flexível.
-
-  function criaPessoa (nome, sobrenome) {
-    return {
-      nome,
-      sobrenome,
-      fala(assunto = "nada") {
-        return `${this.nome} está falando sobre ${assunto}`;
-      },
-      // getter
-      get nomeCompleto() {
-        return this.nome + " " + this.sobrenome;
-      },
-      // setter
-      set nomeCompleto(valor) {
-        valor = valor.split(' ');
-
-        this.nome = valor.shift();
-        this.sobrenome = valor.join(' ');
-
-        console.log(valor);
-      }
-    }
-  }
-
-  const p1 = criaPessoa("Nícolas", "Machado");
-  p1.fala("JS");
-  p1.nomeCompleto = "Nícolas Machado Cardoso";
-  console.log(p1.nomeCompleto);
-
-## 4 - Funções construtoras 
-  são usadas com new pra instanciar objetos.
-  ideia: a função serve como um molde, e o new cria o objeto.
-  usa quando o intuito é criar vários objetos com a mesma estrutura, principalmente com herança/prototype.
-
-  function Pessoa(nome, sobrenome) {
-    // Atributos privados
-    const ID = 123456;
-    const metodoInterno = function () {
-      console.log("Método interno");
-    }
-
-    // Atributos ou métodos públicos
-    this.nome = nome;
-    this.sobrenome = sobrenome;
-
-    this.metodo = function () {
-      console.log(this.nome + ": sou um método");
-    }
-  }
-
-  const p1 = new Pessoa("Nícolas", "Machado");
-  p1.metodo();
-
-  function Usuario(nome, senha) {
-    const senhaInterna = senha;
-
-    this.nome = nome;
-
-    this.validarSenha = function(s) {
-        return s === senhaInterna;
+```js
+function criarSaudacao(mensagem) {
+    return function(nome) {
+        return `${mensagem}, ${nome}`;
     };
-  }
+}
 
-  const u = new Usuario("Nícolas", "123");
+const dizerOla = criarSaudacao("Olá");
 
-  console.log(u.validarSenha("123")); // true
-  console.log(u.senhaInterna); // undefined
+console.log(dizerOla("Nícolas")); // "Olá, Nícolas"
+```
 
-## 5 - Funções recursivas 
-  Funções que chamam ela mesma
+Isso não precisa ser usado em todo código, mas ajuda a entender como funções podem carregar configuração.
 
-  function recursiva (max) {
-    if (max > 10) return;
-    max ++;
-    console.log(max);
-    recursiva(max);
-  }
+---
 
-  recursiva(-10);
+# 8 - Parâmetros padrão
 
-## 6 - Funções geradoras 
-  são funções que podem pausar e continuar execução, usando yield.
-  Lazy evaluation -> não entrega todos os valores de uma vez.
-  usa quando o intuito é controlar execução passo a passo, ou lidar com fluxo de dados incremental.
+Parâmetros padrão definem valores quando nenhum argumento é enviado.
 
-  function* gerarIds() {
-      let i = 1;
-      while (true) {
-          yield i++;
-      }
-  }
+```js
+function criarUsuario(nome, ativo = true) {
+    return {
+        nome,
+        ativo
+    };
+}
 
-  const ids = gerarIds();
+console.log(criarUsuario("Nícolas"));
+```
 
-  console.log(ids.next().value); // 1
-  console.log(ids.next().value); // 2
+Isso evita validações manuais simples.
 
-# _________________________________________________________________________
+---
+
+# 9 - Rest parameters
+
+Rest parameters permitem receber vários argumentos como um array.
+
+```js
+function somarTodos(...numeros) {
+    return numeros.reduce(function(total, numero) {
+        return total + numero;
+    }, 0);
+}
+
+console.log(somarTodos(1, 2, 3)); // 6
+```
+
+O `...numeros` junta os argumentos restantes em um array.
+
+---
+
+# 10 - Exemplo prático completo
+
+```js
+function criarFiltroPorStatus(status) {
+    return function(item) {
+        return item.status === status;
+    };
+}
+
+const pedidos = [
+    { id: 1, status: "aberto" },
+    { id: 2, status: "finalizado" },
+    { id: 3, status: "aberto" }
+];
+
+const filtrarAbertos = criarFiltroPorStatus("aberto");
+const pedidosAbertos = pedidos.filter(filtrarAbertos);
+
+console.log(pedidosAbertos);
+```
+
+Esse exemplo usa:
+
+- função retornando função;
+- closure;
+- callback no `filter`;
+- separação de responsabilidade.
+
+---
+
+# 11 - Erros comuns
+
+### Usar arrow function em método que precisa de this
+
+```js
+const usuario = {
+    nome: "Nícolas",
+    falar: () => this.nome
+};
+```
+
+Prefira:
+
+```js
+const usuario = {
+    nome: "Nícolas",
+    falar: function() {
+        return this.nome;
+    }
+};
+```
+
+### Criar closure sem perceber e manter memória desnecessária
+
+Closures são úteis, mas podem manter referências vivas por mais tempo.
+
+Se uma função interna guarda acesso a objetos grandes, eles podem continuar na memória.
+
+### Usar conceito avançado sem necessidade
+
+Nem todo problema precisa de currying, factory complexa ou composição funcional.
+
+Use quando deixar o código mais claro, não apenas porque é possível.
+
+---
+
+# 12 - Relação com outros estudos
+
+Este conteúdo depende de `Frontend/estudos/javascript/documentos-de-estudo/secao-05-funcoes/1 - Funcoes básicas.md`.
+
+Também se conecta com arrays, memória, assincronismo, `this`, classes e módulos.
+
+---
+
+# 13 - Conclusão
+
+Funções avançadas mostram que funções em JavaScript não são apenas blocos de código.
+
+Elas também são valores, carregam escopo, podem preservar estado e participam da estrutura de praticamente todo código moderno. Dominar esses conceitos ajuda a escrever código mais flexível, mas a regra continua sendo simples: use a solução avançada apenas quando ela melhorar clareza e manutenção.

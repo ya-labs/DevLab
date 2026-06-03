@@ -1,349 +1,203 @@
-    ```js
-Prototype e Prototype Chain (JavaScript real por trás dos objetos)
+# Prototype em JavaScript
 
-# . 1 - o que é Prototype?
-## 1 - Conceito de protótipo em JS
-    JavaScript é baseado em protótipos para passar propriedades e métodos de um
-    objeto para outro.
+JavaScript usa protótipos para compartilhar propriedades e métodos entre objetos.
 
-    Protótipo é o termo usado para se referir ao que foi criado pela primeira
-    vez, servindo de modelo ou molde para futuras produções.
+Mesmo quando usamos `class`, por baixo dos panos o JavaScript continua trabalhando com prototype.
 
-## 2 - [[Prototype]] e __proto__
-    Todo objeto em JavaScript tem uma ligação interna invisível chamada:
-    [[Prototype]] __proto__ que vem da propriedade prototype da função construtora
-    que foi usada para criá-lo. Quando tentamos acessar um membro de um objeto, 
-    primeiro o motor do JS vai tentar encontrar esse membro no próprio objeto 
-    e depois a cadeia de protótipos é usada até o topo (null) até encontrar 
-    (ou não) tal membro. 
-    Isso significa que ele pode "herdar" coisas de outro objeto.
+---
 
-## 3 - Exemplo simples
-    const pessoa = {
-        nome: "Nícolas",
-    };
+# 1 - O que é prototype
 
-    console.log(pessoa.toString());
+Prototype é um objeto usado como base para outros objetos.
 
-    toString() nunca foi definido, mas mesmo assim funciona.
-    por quê?
-    porque ele foi herdado do Prototype.
-    pessoa → Object.prototype → achou lá
+Quando você tenta acessar uma propriedade ou método, o JavaScript procura primeiro no próprio objeto. Se não encontrar, ele procura no protótipo. Esse caminho é chamado de prototype chain.
 
-# ________________________________________________________________________________
+Exemplo:
 
-# . 2 - Prototype na prática 
-## 1 - Como acessar o prototype
-    todo objeto em JS aponta para um "pai":
-    
-    const obj = {};
-    console.log(obj.__proto__);
-    Esse __proto__ (antigo, mas útil para entender) mostra o prototype
+```js
+const pessoa = {
+    nome: "Nícolas"
+};
 
-## 2 - Diferença entre __proto__ e .prototype
-    __proto__
-    - é do objeto
-    - aponta pro prototype dele
-    - é um getter/setter (legado)
+console.log(pessoa.toString());
+```
 
-    const obj = {};
-    console.log(obj.__proto__); // Object.prototype
+`toString` não foi criado dentro de `pessoa`, mas funciona porque foi encontrado em `Object.prototype`.
 
-    .prototype
-    - é das funções construtoras
-    - define o que vai ser herdado pelos objetos criados com new
+---
 
-    function Pessoa() {}
-    console.log(Pessoa.prototype); // {} constructor: ƒ Pessoa()[[Prototype]]: Object
+# 2 - [[Prototype]], __proto__ e .prototype
 
-    resumo direto:
-    obj.__proto__ → de onde o objeto herda
-    Funcao.prototype → o que será herdado pelos objetos
+Todo objeto possui uma ligação interna chamada `[[Prototype]]`.
 
-## 3 - O que define qual prototype um objeto aponta
-    o que define qual prototype o objeto aponta é como ele foi criado.
+Em estudos, às vezes vemos `__proto__` para visualizar essa ligação.
 
-    1. objeto literal {}
-        const obj = {};
+```js
+const obj = {};
 
-        equivale a:
+console.log(obj.__proto__ === Object.prototype); // true
+```
 
-        const obj = new Object();
+Mas no código real, evite manipular `__proto__` diretamente.
 
-        então:
+Já `.prototype` é uma propriedade de funções construtoras.
 
-        obj.__proto__ === Object.prototype
-    
-    2. com new
-        const p1 = new Pessoa();
+```js
+function Pessoa(nome) {
+    this.nome = nome;
+}
 
-        o js faz:
+Pessoa.prototype.falar = function() {
+    return `Olá, eu sou ${this.nome}`;
+};
 
-        const p1 = {};
-        p1.__proto__ = Pessoa.prototype;
+const pessoa = new Pessoa("Nícolas");
 
-        👉 então:
+console.log(pessoa.falar());
+```
 
-        p1.__proto__ === Pessoa.prototype
-    
-    3. com Object.create
-        const p1 = Object.create(pai);
+Resumo:
 
-        o js faz:
+- `obj.__proto__`: protótipo de um objeto;
+- `Funcao.prototype`: objeto que será usado como protótipo das instâncias criadas com `new`.
 
-        const p1 = {};
-        p1.__proto__ = pai;
+---
 
-        👉 aqui tu escolhe manualmente
-    
-    4. arrays
-        const arr = [];
+# 3 - Como a prototype chain funciona
 
-        equivale a:
+```js
+function Usuario(nome) {
+    this.nome = nome;
+}
 
-        const arr = new Array();
+Usuario.prototype.saudacao = function() {
+    return `Olá, ${this.nome}`;
+};
 
-        então:
+const usuario = new Usuario("Nícolas");
 
-        arr.__proto__ === Array.prototype
-    
-    5. funções
-        function teste() {}
+console.log(usuario.saudacao());
+```
 
-        funções são objetos, então:
+Busca do JavaScript:
 
-        teste.__proto__ === Function.prototype
+1. procura `saudacao` em `usuario`;
+2. não encontra;
+3. procura em `Usuario.prototype`;
+4. encontra e executa.
 
-# ________________________________________________________________________________
+Esse mecanismo permite compartilhar métodos sem duplicar a função em cada objeto.
 
-# . 3 - Prototype chain 
-## 1 - Como o JS resolve propriedades
-    quando é acessado:
+---
 
-    obj.chave
-    O js faz isso:
-    - procura no próprio objeto
-    - se não achar -> vai para o prototype
-    - se não achar -> vai para o prototype do prototype
-    - até chegar no topo (null)
+# 4 - O que o new faz
 
-    obj
-    ↓
-    Object.prototype
-    ↓
-    null
+Quando usamos `new`, o JavaScript faz alguns passos internamente.
 
-## 2 - Exemplo prático
-    const arr = [1, 2, 3];
+```js
+function Produto(nome) {
+    this.nome = nome;
+}
 
-    arr.map();
-    arr.filter();
+const produto = new Produto("Arroz");
+```
 
-    Esses métodos vem de Array.prototype
+De forma simplificada:
 
-## 3 - Hierarquia completa
-    Array → Array.prototype → Object.prototype → null
-    Function → Function.prototype → Object.prototype → null
-    Object → Object.prototype → null
+1. cria um objeto vazio;
+2. liga esse objeto a `Produto.prototype`;
+3. executa `Produto` com `this` apontando para o novo objeto;
+4. retorna o objeto criado.
 
-# ________________________________________________________________________________
+---
 
-# . 4 - Criando herança com prototype 
-## 1 - Exemplo clássico
-    function Pessoa (nome) {
-        this.nome = nome;
-    }
+# 5 - Por que prototype existe
 
-    Pessoa.prototype.falar = function () {
-        console.log("Meu nome é " + this.nome);
-    }
+Prototype evita duplicação de métodos.
 
-    const p1 = new Pessoa("Nícolas");
+Exemplo ruim:
 
-    p1.falar();
-
-## 2 - Por que economiza memória
-    - p1 tem nome
-    - falar() não está dentro de p1
-    - então ele procura em:
-
-    p1 -> Pessoa.prototype -> Object.prototype
-
-    E encontra.
-
-    Se fosse feito assim:
-    function Pessoa (nome) {
-        this.nome = nome;
-        this.falar() {
-            console.log(this.nome);
+```js
+function criarUsuario(nome) {
+    return {
+        nome,
+        falar: function() {
+            return `Olá, ${nome}`;
         }
-    }
-
-    cada objeto teria sua própria função (ruim)
-
-    Com prototype, todos compartilham a mesma função.
-
-# ________________________________________________________________________________
-
-# . 5 - Prototype de funções
-## 1 - Toda função tem .prototype
-    funções também são objetos:
-
-    function teste () {}
-
-    console.log(teste.prototype);
-
-    -> toda função construtora tem um .prototype
-
-    no devtools aparece algo tipo:
-
-    {}
-    constructor: ƒ teste()
-    [[Prototype]]: Object
-
-## 2 - Como o .prototype é criado
-    quando uma função é criada, o js faz por baixo:
-    teste.prototype = {
-        constructor: teste
-    }
-
-    ou seja, é um objeto normal
-    tem uma propriedade constructor apontando pra função
-
-    e o [[Prototype]]: Object ali?
-
-    isso quer dizer:
-    teste.prototype.__proto__ === Object.prototype // true
-
-    ou seja:
-    teste.prototype
-    ↓
-    Object.prototype
-    ↓
-    null
-
-# ________________________________________________________________________________
-
-# . 6 - New
-## 1 - O que new faz internamente
-    quando é feito:
-    const p1 = new Pessoa ("Nícolas");
-
-    O js faz isso internamente:
-    const p1 = {};
-
-    p1.__proto__ = Pessoa.prototype; 
-
-    Pessoa.call(p1, "Nícolas")
-
-## 2 - Por que vincula o prototype
-    é assim que a herança funciona.
-
-    o new conecta:
-
-    o objeto criado (p1)
-    com o "modelo" (Pessoa.prototype)
-
-    isso permite:
-
-    p1.falar();
-
-    mesmo "falar" não estando no p1.
-
-## 3 - O que é esse call?
-    isso aqui:
-
-    Pessoa.call(p1, "Nícolas");
-
-    significa:
-
-    executa a função Pessoa, usando p1 como this
-
-    equivalente a:
-
-    this.nome = "Nícolas";
-
-    mas aplicado dentro do p1.
-
-## 4 - Exemplo avançado
-    function Produto (nome, preco) {
-        this.nome = nome;
-        this.preco = preco;
-    }
-
-    Produto.prototype.aumentarPreco = function (valor) {
-        this.preco += valor;
-    }
-
-    Produto.prototype.diminuiPreco = function (valor) {
-        this.preco -= valor;
-    }
-
-    function Camiseta (nome, preco, material) {
-        Produto.call(this, nome, preco);
-        this.material = material;
-    }
-
-    Camiseta.prototype = Object.create(Produto.prototype);
-    Camiseta.prototype.constructor = Camiseta;
-
-    const produto = new Produto('Prod. Generico', 10)
-    const camiseta = new Camiseta('Regata', 57.5, 'algodão')
-    
-    console.log(produto);
-    console.log(camiseta);
-
-# ________________________________________________________________________________
-
-# . 7 - Object.create (herança direta)
-## 1 - Usando Object.create
-    const pessoa = {
-        falar() {
-            console.log("oi");
-        }
-    }
-
-    const p1 = Object.create(pessoa); 
-
-    p1.falar();
-
-    p1 não tem falar, mas herda do objeto pessoa
-
-## 2 - O que Object.create() faz
-    ele faz basicamente isso:
-
-    const p1 = {};
-    p1.__proto__ = pessoa;
-
-    ou seja:
-
-    cria um objeto vazio
-    liga ele diretamente ao objeto que foi passado
-
-# ________________________________________________________________________________
-
-# . 8 - Shadowing (Sobrescrita)
-## 1 - Propriedade no filho sobrescreve a do pai
-    se o filho tem a propriedade:
-    const pai = {
-        nome: "pai"
     };
+}
+```
 
-    const filho = Object.create(pai);
+Cada usuário criado recebe uma nova função `falar`.
 
-    filho.nome = "filho";
+Com prototype:
 
-    console.log(filho.nome); // filho
-    -> ele não usa do pai, pois encontrou primeiro nele mesmo.
+```js
+function Usuario(nome) {
+    this.nome = nome;
+}
 
-# ________________________________________________________________________________
+Usuario.prototype.falar = function() {
+    return `Olá, ${this.nome}`;
+};
+```
 
-# . 9 - Como o JS resolve propriedades 
-## 1 - Ordem de busca
-    Quando é feito:
-    obj.x
-    JS faz:
-    1 - obj
-    2 - obj.__proto__
-    3 - obj.__proto__.__proto__ 
-    4 - null
+Agora o método fica compartilhado.
+
+---
+
+# 6 - Relação com classes
+
+Classes são uma sintaxe mais moderna e organizada para trabalhar com esse mesmo mecanismo.
+
+```js
+class Usuario {
+    constructor(nome) {
+        this.nome = nome;
+    }
+
+    falar() {
+        return `Olá, ${this.nome}`;
+    }
+}
+```
+
+O método `falar` vai para `Usuario.prototype`.
+
+Por isso, estudar prototype ajuda a entender o que classes realmente fazem.
+
+---
+
+# 7 - Erros comuns
+
+### Achar que class eliminou prototype
+
+Classes em JavaScript continuam usando prototype internamente.
+
+### Alterar prototypes nativos sem necessidade
+
+```js
+Array.prototype.meuMetodo = function() {};
+```
+
+Isso pode causar conflitos e comportamentos inesperados.
+
+### Confundir `__proto__` com `.prototype`
+
+`__proto__` é ligação de objeto. `.prototype` é propriedade de função construtora.
+
+---
+
+# 8 - Relação com outros estudos
+
+Prototype se conecta com objetos, funções, classes e `this`.
+
+Antes de estudar classes, vale entender pelo menos a ideia de prototype chain.
+
+---
+
+# 9 - Conclusão
+
+Prototype é o mecanismo central de compartilhamento e herança em JavaScript.
+
+Mesmo que no código moderno você use mais `class`, entender prototype ajuda a compreender melhor objetos, métodos, instâncias e o comportamento real da linguagem.

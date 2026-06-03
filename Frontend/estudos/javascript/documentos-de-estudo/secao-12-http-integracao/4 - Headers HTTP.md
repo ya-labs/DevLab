@@ -1,10 +1,15 @@
+# Headers HTTP
+
+Headers HTTP são informações extras enviadas junto com uma requisição ou resposta HTTP.
+
+Eles não representam o conteúdo principal. Eles funcionam como metadados da comunicação entre cliente e servidor.
+
+---
+
 # 1 - O que são Headers HTTP
 
-Informações extras enviadas junto com uma requisição ou resposta HTTP.
-
-Eles não representam o conteúdo principal da resposta. Eles funcionam como `metadados`, ou seja, informações sobre a comunicação.
-
 Quando o front-end faz uma requisição para uma API, a comunicação normalmente possui:
+
 - método HTTP;
 - URL;
 - headers;
@@ -12,9 +17,9 @@ Quando o front-end faz uma requisição para uma API, a comunicação normalment
 - status HTTP na resposta;
 - body da resposta, quando houver.
 
-Exemplo simples de requisição:
+Exemplo simples:
 
-```
+```http
 GET /usuarios
 Accept: application/json
 ```
@@ -25,27 +30,28 @@ Nesse exemplo, o header `Accept` informa que o cliente espera receber uma respos
 
 # 2 - Por que Headers HTTP existem
 
-Headers existem para permitir que cliente e servidor troquem informações além dos dados principais.
+Headers permitem que cliente e servidor troquem informações além dos dados principais.
 
 Na prática, eles ajudam a responder perguntas como:
-- Qual formato de dados está sendo enviado?
-- Qual formato de resposta o cliente espera?
-- O usuário está autenticado?
-- A resposta pode ser armazenada em cache?
-- A requisição veio de qual origem?
-- Cookies devem ser enviados?
-- Qual idioma o cliente prefere?
 
-Sem headers, a API teria dificuldade para entender detalhes importantes da requisição.
+- qual formato de dados está sendo enviado?
+- qual formato de resposta o cliente espera?
+- o usuário está autenticado?
+- a resposta pode ser armazenada em cache?
+- a requisição veio de qual origem?
+- cookies devem ser enviados?
+- qual idioma o cliente prefere?
+
+Sem headers, a API teria dificuldade para interpretar detalhes importantes da requisição.
 
 Exemplo:
 
-```
+```http
 POST /usuarios
 Content-Type: application/json
 ```
 
-O header Content-Type informa ao servidor:
+O header `Content-Type` informa ao servidor:
 
 > O body desta requisição está no formato JSON.
 
@@ -53,13 +59,9 @@ O header Content-Type informa ao servidor:
 
 # 3 - Headers de requisição e headers de resposta
 
-Existem dois momentos principais em que headers aparecem.
-
 Headers de requisição são enviados pelo cliente para o servidor.
 
-Exemplo:
-
-```
+```http
 Authorization: Bearer token_aqui
 Content-Type: application/json
 Accept: application/json
@@ -67,9 +69,7 @@ Accept: application/json
 
 Headers de resposta são enviados pelo servidor para o cliente.
 
-Exemplo:
-
-```
+```http
 Content-Type: application/json
 Cache-Control: no-cache
 Set-Cookie: sessionId=abc123
@@ -81,53 +81,44 @@ No front-end, geralmente os headers são enviados usando `fetch` e são lidos at
 
 # 4 - Headers mais comuns no front-end
 
-### Content-Type
+## Content-Type
 
 Informa o tipo de conteúdo que está sendo enviado.
 
-Exemplo com JSON:
-
-```
+```http
 Content-Type: application/json
 ```
 
-Uso comum no fetch:
+Uso comum no `fetch`:
 
 ```js
-async function criarUsuario () {
+async function criarUsuario() {
     const response = await fetch("/api/usuarios", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            nome: "Nicolas",
+            nome: "Nícolas",
             email: "nicolas@email.com"
         })
     });
 
-    const data = await response.json();
+    if (!response.ok) {
+        throw new Error("Erro ao criar usuário");
+    }
 
-    console.log(data);
+    return response.json();
 }
 ```
 
-Explicação:
+Sem `Content-Type`, algumas APIs podem não interpretar corretamente o body enviado.
 
-- `method: "POST"` informa que a requisição vai criar um recurso;
-- `headers` configura os metadados da requisição;
-- `"Content-Type": "application/json"` informa que o body está em JSON;
-- `JSON.stringify(...)` transforma o objeto JavaScript em uma string JSON.
-
-Sem `Content-Type`, algumas APIs podem não conseguir interpretar corretamente o body enviado.
-
-### Accept
+## Accept
 
 Informa qual tipo de resposta o cliente espera receber.
 
-Exemplo:
-
-```
+```http
 Accept: application/json
 ```
 
@@ -141,28 +132,22 @@ const response = await fetch("/api/produtos", {
 });
 ```
 
-Na prática, esse header diz:
+Esse header deixa a comunicação mais explícita.
 
-> Servidor, eu prefiro receber a resposta em JSON.
-
-Nem toda API exige esse header, mas ele deixa a comunicação mais explícita.
-
-### Authorization
+## Authorization
 
 Usado para enviar credenciais de autenticação.
 
 Muito comum em APIs que usam JWT.
 
-Exemplo:
-
-```
+```http
 Authorization: Bearer token_aqui
 ```
 
 No `fetch`:
 
 ```js
-async function buscarPerfil (token) {
+async function buscarPerfil(token) {
     const response = await fetch("/api/perfil", {
         headers: {
             Authorization: `Bearer ${token}`
@@ -177,46 +162,27 @@ async function buscarPerfil (token) {
 }
 ```
 
-O ponto importante aqui é:
+O token ajuda o servidor a identificar e autorizar o usuário.
 
-> O token identifica o usuário ou permite validar se ele tem acesso àquele recurso.
-
-Esse assunto se conecta com [5 - Autenticacao e JWT.md](./5%20-%20Autenticacao%20e%20JWT.md) e pode ser usado para aprofundar autenticação.
-
-### Cache-Control
+## Cache-Control
 
 Controla como a resposta pode ser armazenada em cache.
 
-Exemplo:
-
 ```http
-Cache-Control: no-cache
+Cache-Control: no-store
 ```
 
 Em APIs, esse header pode ser usado para evitar que dados sensíveis ou muito dinâmicos sejam reaproveitados incorretamente.
 
-Exemplo de resposta:
-
-```http
-200 OK
-Cache-Control: no-store
-```
-
-Isso pode indicar que a resposta não deve ser armazenada.
-
-### Set-Cookie
+## Set-Cookie
 
 É enviado pelo servidor para criar ou atualizar um cookie no navegador.
-
-Exemplo:
 
 ```http
 Set-Cookie: sessionId=abc123
 ```
 
-Esse header é importante em autenticação baseada em sessão
-
-No front-end, quando a API usa cookies, muitas vezes é necessário usar:
+Quando a API usa cookies, o front-end muitas vezes precisa enviar credenciais.
 
 ```js
 fetch("/api/perfil", {
@@ -224,7 +190,7 @@ fetch("/api/perfil", {
 });
 ```
 
-Isso se conecta ao documento [9 - Cookies Sessao e Credentials.md](./9%20-%20Cookies%20Sessao%20e%20Credentials.md)
+Esse assunto se conecta com `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/9 - Cookies Sessao e Credentials.md`.
 
 ---
 
@@ -232,10 +198,8 @@ Isso se conecta ao documento [9 - Cookies Sessao e Credentials.md](./9%20-%20Coo
 
 O `fetch` permite acessar headers da resposta através de `response.headers`.
 
-Exemplo:
-
 ```js
-async function buscarDados () {
+async function buscarDados() {
     const response = await fetch("/api/produtos");
 
     const contentType = response.headers.get("Content-Type");
@@ -257,7 +221,7 @@ Isso é útil quando você precisa verificar o tipo de conteúdo retornado pela 
 # 6 - Exemplo prático completo
 
 ```js
-async function buscarPerfil (token) {
+async function buscarPerfil(token) {
     const response = await fetch("/api/perfil", {
         method: "GET",
         headers: {
@@ -281,6 +245,7 @@ async function buscarPerfil (token) {
 ```
 
 O que acontece nesse código:
+
 - `Accept` informa que o front-end espera JSON;
 - `Authorization` envia o token do usuário;
 - `response.ok` valida se o status está entre 200 e 299;
@@ -291,7 +256,7 @@ O que acontece nesse código:
 
 # 7 - Erros comuns
 
-### Enviar `body` JSON sem `Content-Type`.
+### Enviar body JSON sem Content-Type
 
 ```js
 await fetch("/api/usuarios", {
@@ -300,30 +265,44 @@ await fetch("/api/usuarios", {
 });
 ```
 
-- O problema é que a API pode não entender corretamente o formato do corpo.
+A API pode não entender corretamente o formato do corpo.
 
-### Confundir Content-Type com Accept.
-- Content-Type: formato do conteúdo que está sendo enviado.
-- Accept: formato do conteúdo que o cliente aceita receber.
+### Confundir Content-Type com Accept
 
-### Esquecer de incluir o token no header Authorization.
+`Content-Type` indica o formato do conteúdo enviado.
 
-- Sem o token, a API pode retornar um erro de autenticação.
+`Accept` indica o formato que o cliente aceita receber.
 
-### Não verificar os headers da resposta.
+### Esquecer Authorization
 
-- Nem toda resposta é JSON. Se a API retornar um erro em HTML, tentar ler como JSON causará um erro.
+Sem o token, a API pode retornar erro de autenticação ou autorização.
+
+### Tentar ler header que o navegador não expõe
+
+Em requisições cross-origin, alguns headers só ficam disponíveis para o JavaScript se a API permitir via CORS.
+
+Esse assunto se conecta com `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/6 - CORS.md`.
 
 ---
 
 # 8 - Relação com outros estudos
 
-Antes desse assunto, vale revisar [1 - Fetch API.md](./1%20-%20Fetch%20API.md), porque é onde os headers aparecem no uso prático com `fetch`.
+Antes deste assunto, vale revisar `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/1 - Fetch API.md`, porque é onde headers aparecem no uso prático.
 
-Esse conteúdo também se conecta com [2 - REST API.md](./2%20-%20REST%20API.md), principalmente em autenticação, stateless e contrato entre front-end e back-end.
+Este conteúdo também se conecta com:
 
-Depois, ele prepara terreno para [5 - Autenticacao e JWT.md](./5%20-%20Autenticacao%20e%20JWT.md) e [6 - CORS.md](./6%20-%20CORS.md).
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/2 - REST API.md`;
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/3 - Status HTTP.md`;
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/5 - Autenticacao e JWT.md`;
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/6 - CORS.md`;
+- `Frontend/estudos/javascript/documentos-de-estudo/secao-12-http-integracao/9 - Cookies Sessao e Credentials.md`.
+
+Esse conteúdo não precisa repetir autenticação, CORS ou cookies em profundidade. Aqui o foco é entender o papel dos headers na comunicação.
+
+---
 
 # 9 - Conclusão
 
-Headers HTTP são metadados que ajudam cliente e servidor a se comunicarem com mais contexto. No front-end, os mais importantes no começo são `Content-Type`, `Accept` e `Authorization`.
+Headers HTTP são metadados que dão contexto para requisições e respostas.
+
+No front-end, os mais importantes no começo são `Content-Type`, `Accept` e `Authorization`. Entender bem esses headers ajuda a consumir APIs com mais segurança, interpretar respostas corretamente e preparar o estudo de autenticação, CORS e cookies.

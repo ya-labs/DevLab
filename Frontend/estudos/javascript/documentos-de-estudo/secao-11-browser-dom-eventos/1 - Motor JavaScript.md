@@ -1,457 +1,250 @@
-    ```js
-Motor do JavaScript é o que pega teu código e faz ele virar execução real na máquina,
-sem isso, JS é só um texto, um arquivo, uma string, não é nada mais do que isso.
-
-Exemplos famosos:
-- V8 (Google Chrome, Node.js)
-- SpiderMonkey (Mozilla Firefox)
-- JavaScriptCore (Safari)
-- Chakra (Microsoft Edge)
-
-# . 1 - Como o motor funciona
-Pipeline simplificado:
-    Código JS -> Parser -> AST -> Compilação -> Execução
-
-## 1 - Parsing (leitura do código)
-    O motor lê o código e cria uma estrutura de dados chamada AST (Abstract Syntax Tree).
-    A AST (Abstract Syntax Tree) é uma representação hierárquica do código, onde cada nó representa uma 
-    construção do código (função, variável, expressão, etc).
-
-    Exemplo:
-        let x = 10;
-
-    Vira algo tipo:
-        VariableDeclaration
-        ├── Identifier (x)
-        └── Literal (10)
+# Motor JavaScript
 
-    Isso significa que o motor entendeu que você declarou uma variável chamada x e atribuiu a ela o valor 10.
-    - O JS não executa texto direto.
-    - ele executa uma representação estruturada.
+O motor JavaScript é a parte responsável por transformar código JavaScript em execução real.
 
-## 2 - Compilação JIT (Just-In-Time)
-    O motor compila o código para uma linguagem de máquina que o computador pode entender.
-    A compilação JIT é feita em tempo de execução, ou seja, enquanto o código está sendo executado.
-    Isso permite otimizações dinâmicas, como inlining de funções, eliminação de código morto, etc.
-
-    No V8 por exemplo, o código é compilado para bytecode e depois otimizado para código nativo.
-    - Ignition -> interpretador de bytecode
-    - TurboFan -> otimizador de código nativo
+Sem o motor, um arquivo `.js` é apenas texto. O motor interpreta, compila, otimiza e executa esse código.
 
-    O motor monitora o código em execução e, se detectar que uma função é chamada muitas vezes, ele a otimiza para melhorar o desempenho.
-    Isso é o que torna o JavaScript tão rápido, mesmo sendo uma linguagem interpretada.
-
-    Tradução prática: 
-    - código roda rápido no começo.
-    - fica mais rápido ainda com o tempo, conforme o motor otimiza o código que é mais utilizado.
-
-## 3 - Execução
-    Aqui entra os conceitos de:
-    - Call Stack (pilha de chamadas)
-    - Heap (memória para alocação de objetos)
-    - Event Loop (laço de eventos)
-
-    Estruturas internas importantes
-    - Call Stack: onde as funções são empilhadas e executadas.
-        Controla quem está executando o quê e quando.
-
-        function a() {
-            b();
-        };
-
-        function b() {
-            console.log("b");
-        };
-
-        a();
-
-        Stack:
-        a()
-        b()
-        console.log("b")
-        Regra: LIFO (Last In, First Out) -> a última função que entrou é a primeira a sair da pilha, ou seja, 
-        a função que está sendo executada no momento é a que está no topo da pilha.
-
-    - Heap: onde ficam os objetos alocados dinamicamente, como:
-        - Objetos
-        - Funções
-        - Arrays
-        - Qualquer estrutura de dados que precise de alocação dinâmica
-
-        const obj = { nome: "Nícolas" };
-        - obj fica no heap,
-        - a variável guarda uma referência.
-
-    - Garbage Collector: 
-        O motor automaticamente limpa memória não usada.
-
-        Exemplo:
-            let obj = { nome: "Nícolas" };
-            obj = null; // o objeto original fica sem referência e pode ser coletado pelo GC.
-
-            isso impacta:
-            - performance (menos memória usada)
-            - vazamento de memória (quando são mantidas referências sem querer)
-# ____________________________________________________________________________________________________________
-
-# . 2 - Otimizações do motor
-## 1 - Inline Caching
-    Motor tenta prever tipos:
-
-    obj.nome
-
-    se sempre for string -> otimiza acesso.
-
-## 2 - Hidden Classes (V8)
-    Objetos com mesma estrutura são otimizados.
-
-    // bom
-    const a = { x: 1, y: 2};
-    const b = { x: 3, y: 4};
-
-    // ruim
-    const a = { x: 1};
-    a.y = 2;
-
-    Porque o motor tem que criar uma nova estrutura para a variável a, já que ela mudou.
+---
 
-## 3 - De-optimization
-    Se o tipo da variável for alterada:
+# 1 - Exemplos de motores JavaScript
 
-    let x = 10; // otimizado como number
-    x = "texto"; // desotimizado, pois mudou para string
+Motores famosos:
 
-    Motor perde otimizações anteriores e tem que reavaliar o código, o que pode impactar performance.
+- V8: usado no Google Chrome e no Node.js;
+- SpiderMonkey: usado no Firefox;
+- JavaScriptCore: usado no Safari;
+- Chakra: usado em versões antigas do Microsoft Edge.
 
-# ____________________________________________________________________________________________________________
+Cada navegador possui ou usa um motor para executar JavaScript.
 
-# . 3 - Interpretação vs Compilação
-    Interpretação, de maneira resumida, é quando o código é lido e executado linha por linha, 
-    sem passar por um processo de compilação prévia. 
-    
-    Já a compilação é quando o código é transformado em uma linguagem de máquina antes de ser executado.
-    
-    O motor do JavaScript é uma mistura de ambos, usando técnicas de compilação JIT para otimizar o código em tempo de execução,
-    mas ainda interpretando o código inicialmente para criar a AST e entender a estrutura do programa.
+---
 
-# ____________________________________________________________________________________________________________
+# 2 - Por que estudar o motor
 
-# . 4 - Boas práticas para performance:
-## 1 - Mantenha o tipo das variáveis consistente:
-    Ruim:
-        let x = 10; // otimizado como number
-        x = "texto"; // desotimizado, pois mudou para string
-        x = true; // desotimizado novamente, pois mudou para boolean
+Entender o motor ajuda a compreender:
 
-    bom:
-        let x = 10; // otimizado como number
-        x = 20; // continua otimizado como number
+- por que JavaScript não executa texto diretamente;
+- como funções entram e saem da call stack;
+- onde objetos ficam na memória;
+- por que algumas operações assíncronas não travam a tela;
+- como otimizações podem melhorar ou piorar performance;
+- como DOM, eventos e event loop se conectam.
 
-## 2 - Evite criar objetos com estruturas diferentes:
-    Ruim:
-        const a = { x: 1};
-        a.y = 2; // nova estrutura
+Não é necessário decorar detalhes internos, mas entender o fluxo geral melhora a leitura de código.
 
-    bom:
-        const a = { x: 1, y: 2}; // mesma estrutura
+---
 
-## 3 - Evite recriar funções dentro de loops
-    Ruim:
-        for (let i = 0; i < 1000; i++) {
-            const func = function() { return i; }; // nova função a cada iteração
-        }
+# 3 - Pipeline simplificado
 
-    bom:
-        const func = function(i) { return i; }; // função única
-        for (let i = 0; i < 1000; i++) {
-            func(i); // reutiliza a mesma função
-        }
+De forma simplificada:
 
-## 4 - Evite acessar objeto profundo várias vezes:
-    Ruim:
-        console.log(usuario.endereco.cidade);
-        console.log(usuario.endereco.cidade);
-        console.log(usuario.endereco.cidade);
+```txt
+Código JavaScript -> Parser -> AST -> Bytecode/compilação -> Execução -> Otimizações
+```
 
-    bom:
-        const cidade = usuario.endereco.cidade; // acesso único
-        console.log(cidade);
-        console.log(cidade);
-        console.log(cidade);
+O motor não executa o texto bruto diretamente.
 
-    reduz custo de lookup.
+Ele transforma o código em estruturas internas que consegue entender e executar.
 
-## 5 - Prefira loops simples em código crítico:
-    Ruim:
-        arr.forEach(item => {
-            // código complexo
-        });
+---
 
-    bom:
-        for (let i = 0; i < arr.length; i++) {
-            const item = arr[i];
-            // código complexo
-        }
+# 4 - Parser e AST
 
-    o for tradicional é mais fácil de otimizar em código crítico, embora forEach seja mais legível na maioria dos casos.
-    na prática, a diferença de performance é mínima, então prefira legibilidade, mas em casos extremos, o for tradicional pode ser melhor.
+O parser lê o código e cria uma AST.
 
-## 6 - Não misture tipos em arrays:
-    Ruim:
-        const arr = [1, "texto", true, { nome: "obj" }];
+AST significa Abstract Syntax Tree.
 
-    bom:
-        const numeros = [1, 2, 3];
-        const textos = ["a", "b", "c"];
-        const booleanos = [true, false];
-        const objetos = [{ nome: "obj1" }, { nome: "obj2" }];
+Ela representa o código em formato de árvore.
 
-    isso ajuda o motor a otimizar o acesso aos elementos do array.
+Exemplo:
 
-## 7 - Entenda o event loop para evitar bugs
-    O JavaScript é **single-threaded**, ou seja, executa **uma coisa por vez** na thread principal.
+```js
+let idade = 20;
+```
 
-    Mas então como ele consegue lidar com coisas assíncronas?
-    Através do **Event Loop**.
+O motor entende que existe:
 
-    ### Como funciona
+- uma declaração de variável;
+- um identificador chamado `idade`;
+- um valor literal `20`;
+- uma atribuição.
 
-    Pensa em 4 partes:
+Essa estrutura facilita análise, execução e otimização.
 
-    **Call Stack (pilha de execução)**
-    É onde o JavaScript executa as funções.
+---
 
-    ```js
-    console.log("oi");
-    ```
+# 5 - Execução e call stack
 
-    O `console.log` entra na stack, executa e sai.
+A call stack controla a execução das funções.
 
-    ---
+```js
+function a() {
+    b();
+}
 
-    **Web APIs / Runtime**
-    São recursos do navegador (ou Node.js) que executam tarefas fora da stack.
+function b() {
+    console.log("b");
+}
 
-    Exemplo:
+a();
+```
 
-    * `setTimeout`
-    * requisições HTTP
-    * eventos de clique
+Fluxo:
 
-    Quando fazemos:
+1. `a()` entra na stack;
+2. `b()` entra na stack;
+3. `console.log()` entra na stack;
+4. `console.log()` termina e sai;
+5. `b()` termina e sai;
+6. `a()` termina e sai.
 
-    ```js
-    setTimeout(() => {
-        console.log("callback");
-    }, 1000);
-    ```
+A stack segue a regra LIFO: o último que entra é o primeiro que sai.
 
-    O JS **não fica esperando 1 segundo parado**.
+---
 
-    Ele entrega essa tarefa pro navegador.
+# 6 - Heap e objetos
 
-    ---
+Objetos, arrays e funções ficam na heap.
 
-    **Callback Queue (Macrotasks)**
-    Quando a tarefa termina, o callback vai pra fila de espera.
+```js
+const usuario = {
+    nome: "Nícolas"
+};
+```
 
-    Exemplo:
+De forma simplificada:
 
-    ```js
-    setTimeout(() => {
-        console.log("timeout");
-    }, 0);
-    ```
+- o objeto fica na heap;
+- a variável `usuario` guarda uma referência para esse objeto.
 
-    Mesmo com `0`, ele não executa instantaneamente.
+Esse assunto se conecta com `Frontend/estudos/javascript/documentos-de-estudo/secao-07-memoria/1 - Memória.md`.
 
-    Ele só entra na fila.
+---
 
-    ---
+# 7 - Garbage collector
 
-    **Microtask Queue**
-    Fila com prioridade maior.
+O garbage collector libera memória que não está mais acessível.
 
-    Vai pra cá:
+```js
+let usuario = {
+    nome: "Nícolas"
+};
 
-    * `Promise.then()`
-    * `catch()`
-    * `finally()`
-    * `queueMicrotask()`
+usuario = null;
+```
 
-    ---
+Quando o objeto deixa de ter referências, ele pode ser removido da memória.
 
-    **Event Loop**
-    É o "fiscal".
+O desenvolvedor não controla exatamente quando essa limpeza acontece.
 
-    Ele verifica:
+---
 
-    > "a call stack tá vazia?"
+# 8 - JIT e otimizações
 
-    Se sim:
+Motores modernos usam otimizações em tempo de execução.
 
-    1. executa **todas as microtasks**
-    2. depois executa **uma macrotask**
+No V8, por exemplo, existe um fluxo com interpretador e otimizador.
 
-    ---
+Ideia prática:
 
-    ### Exemplo real
+- o código começa executando;
+- o motor observa padrões;
+- funções muito usadas podem ser otimizadas;
+- se os padrões mudam, otimizações podem ser descartadas.
 
-    ```js
-    setTimeout(() => {
-        console.log("Callback");
-    }, 0);
+Por isso, código previsível e com tipos mais estáveis tende a ser mais fácil de otimizar.
 
-    console.log("Início");
+Exemplo:
 
-    Promise.resolve().then(() => {
-        console.log("Promise");
-    });
+```js
+function somar(a, b) {
+    return a + b;
+}
 
-    console.log("Fim");
-    ```
+somar(1, 2);
+somar(3, 4);
+somar("a", "b");
+```
 
-    Fluxo:
+Misturar tipos pode tornar o comportamento menos previsível para otimizações.
 
-    **1. stack**
+Isso não significa que você precisa micro-otimizar tudo. Primeiro escreva código claro.
 
-    ```js
-    console.log("Início");
-    ```
+---
 
-    saida:
+# 9 - Motor JavaScript e navegador
 
-    ```js
-    Início
-    ```
+O motor JavaScript não é o navegador inteiro.
 
-    ---
+O navegador também possui outras partes responsáveis por:
 
-    **2. setTimeout**
-    Vai pro navegador.
+- interpretar HTML;
+- interpretar CSS;
+- montar DOM;
+- calcular layout;
+- pintar pixels na tela;
+- gerenciar rede;
+- controlar eventos.
 
-    ---
+O JavaScript conversa com essas APIs do navegador, mas elas não pertencem ao motor puro da linguagem.
 
-    **3. Promise**
-    Vai pra microtask queue.
+---
 
-    ---
+# 10 - Exemplo prático completo
 
-    **4.**
+```js
+function criarUsuario(nome) {
+    return {
+        nome,
+        ativo: true
+    };
+}
 
-    ```js
-    console.log("Fim");
-    ```
+function exibirUsuario(usuario) {
+    console.log(usuario.nome);
+}
 
-    saida:
+const usuario = criarUsuario("Nícolas");
 
-    ```js
-    Fim
-    ```
+exibirUsuario(usuario);
+```
 
-    ---
+Nesse exemplo:
 
-    Agora a stack ficou vazia.
+- funções entram e saem da call stack;
+- o objeto retornado fica na heap;
+- a variável `usuario` guarda referência;
+- o motor executa as instruções;
+- `console.log` usa uma API disponível no ambiente.
 
-    Event loop olha:
+---
 
-    **tem microtask?**
-    sim
+# 11 - Erros comuns
 
-    executa:
+### Achar que JavaScript é só interpretado
 
-    ```js
-    Promise
-    ```
+Motores modernos fazem otimizações e compilação em tempo de execução.
 
-    depois:
+### Confundir motor com navegador
 
-    **tem macrotask?**
-    sim
+DOM, CSS, layout e rede são recursos do navegador. O motor executa JavaScript.
 
-    executa:
+### Tentar otimizar antes de medir
 
-    ```js
-    Callback
-    ```
+Entender o motor é útil, mas micro-otimização sem evidência costuma piorar legibilidade.
 
-    ---
+---
 
-    Saída final:
+# 12 - Relação com outros estudos
 
-    ```js
-    Início
-    Fim
-    Promise
-    Callback
-    ```
+Este conteúdo se conecta com memória, DOM, eventos, assincronismo e event loop.
 
-    Resumo brutal:
+Antes de estudar DOM e eventos, vale entender que o motor JavaScript executa o código, mas o navegador fornece as APIs para manipular a página.
 
-    **stack > microtasks > macrotasks**
+---
 
-    Esse detalhe é onde nasce MUITO bug de assincronidade 😈
+# 13 - Conclusão
 
-## 8 - Evite recursão profunda sem controle:
-    function fatorial(n) {
-        if (n === 0) return 1;
-        return n * fatorial(n - 1);
-    }
+O motor JavaScript é quem transforma código em execução.
 
-    fatorial(10000); // pode causar stack overflow
-
-    Prefira soluções iterativas.
-    Exemplo iterativo:
-        function fatorial(n) {
-            let resultado = 1;
-            for (let i = 1; i <= n; i++) {
-                resultado *= i;
-            }
-            return resultado;
-        }
-
-## 9 - Cache de resultado (memoization simples)
-    ruim: 
-        function soma (a, b) {
-            return a + b;
-        }
-
-    bom:
-        const cache = {};
-
-        function soma (a, b) {
-            const chave = `${a},${b}`;
-
-            if (cache[chave]) {
-                return cache[chave];
-            }
-
-            const resultado = a + b;
-
-            cache[chave] = resultado;
-
-            return resultado;
-        }
-
-## 10 - Evite criar objetos desnecessários
-    ruim:
-        function criarUsuario(nome) {
-            return { nome };
-        }
-
-        const user1 = criarUsuario("Nícolas");
-        const user2 = criarUsuario("João");
-
-    bom:
-        const usuarioProto = { falar() { console.log(`Olá, meu nome é ${this.nome}`); } };
-
-        function criarUsuario(nome) {
-            const usuario = Object.create(usuarioProto);
-            usuario.nome = nome;
-            return usuario;
-        }
-
-        const user1 = criarUsuario("Nícolas");
-        const user2 = criarUsuario("João");
-
-    isso reduz a quantidade de objetos criados e permite compartilhar métodos através do protótipo.
+Entender parser, AST, call stack, heap, garbage collector e otimizações ajuda a enxergar melhor o que acontece por trás do código, sem perder o foco principal: escrever código claro, previsível e fácil de manter.
