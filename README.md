@@ -1,123 +1,145 @@
-# Frontend Learning Lab
+# DevLab
 
-Repositório voltado ao ensino, prática e aprofundamento técnico em desenvolvimento front-end.
+O **DevLab** é um laboratório de aprendizado da **YA LABS** voltado ao estudo prático de desenvolvimento de software.
 
-Este projeto foi criado e desenvolvido por **Nícolas Machado Cardoso**. Inicialmente, a ideia surgiu como uma forma de treinar um novo estagiário da equipe para atuar em um sistema legado utilizando AngularJS e Cordova. Com o crescimento da estrutura, organização dos conteúdos e expansão dos objetivos, o repositório evoluiu para uma plataforma reutilizável de estudos e treinamento técnico voltada à formação de desenvolvedores front-end.
+Atualmente, o repositório tem foco principal em **front-end** e reúne aulas, estudos, exercícios e materiais de apoio para formação técnica em JavaScript e tecnologias relacionadas.
 
-O projeto foi pensado para centralizar materiais de estudo, exercícios, desafios e projetos práticos, simulando um fluxo de aprendizado próximo ao ambiente real de mercado.
-
-Inicialmente, o repositório possui foco em:
-
-* JavaScript
-* AngularJS
-
-E futuramente também incluirá conteúdos sobre:
-
-* React
-* TypeScript
-* Next.js
-* Arquitetura Front-End
-* Integração com APIs
-* Boas práticas e organização de projetos
+A proposta é organizar uma trilha de aprendizado próxima de um fluxo real de desenvolvimento, com prática constante, uso de GitHub, revisões, entregas e evolução progressiva.
 
 ---
 
-# Objetivo
+## Objetivo
 
-Este repositório foi criado para:
+O DevLab existe para:
 
-* Centralizar materiais de estudo.
-* Organizar trilhas de aprendizado.
-* Treinar novos desenvolvedores.
-* Compartilhar exercícios práticos.
-* Simular fluxo real de desenvolvimento.
-* Servir como base de consulta técnica.
-* Incentivar aprendizado ativo através de forks individuais.
+- centralizar materiais de estudo;
+- organizar aulas e trilhas de aprendizado;
+- registrar exercícios práticos;
+- apoiar mentorias e treinamentos técnicos;
+- servir como base de consulta para front-end;
+- aproximar o estudo de práticas reais de desenvolvimento.
 
 ---
 
-# Estrutura do repositório
+## Conteúdos atuais
 
-```txt id="mjlwmf"
-estudos/
-exercicios/
-resolucoes/
-projetos/
-desafios/
-docs/
-assets/
+O repositório aborda principalmente:
+
+- JavaScript;
+- React;
+- AngularJS;
+- Cordova;
+- DOM, eventos e Web APIs;
+- HTTP, Fetch API, REST API, status e headers HTTP;
+- organização de código;
+- exercícios de lógica e programação;
+- Git e GitHub aplicados ao processo de estudo.
+
+---
+
+## Estrutura do repositório
+
+```txt
+DevLab/
+- AGENTS.md
+- README.md
+- Frontend/
+  - aulas/
+  - estudos/
+    - angularjs/
+    - javascript/
+    - react/
+  - exercicios/
+    - javascript/
 ```
 
----
+### `Frontend/aulas/`
 
-# Como funciona
+Organiza os materiais semanais da mentoria.
 
-Os participantes deverão:
+A primeira semana apresenta o funcionamento do DevLab, o motivo de iniciar por JavaScript, o uso do GitHub, a configuração do VS Code e a primeira atividade prática.
 
-1. Fazer fork deste repositório.
-2. Resolver os exercícios propostos.
-3. Organizar suas resoluções no próprio fork.
-4. Evoluir gradualmente através das trilhas de estudo.
-5. Utilizar os modelos de resolução apenas como referência de aprendizado.
-6. Abrir Pull Requests quando solicitado para revisão técnica.
+### `Frontend/estudos/javascript/`
 
----
+Concentra os documentos da trilha JavaScript.
 
-# Participantes
+A trilha inclui primeiros passos em programação, variáveis, operadores, condicionais, loops, funções, arrays, objetos, memória, assincronismo, orientação a objetos, modularização, DOM, eventos, Web Storage e integração HTTP.
 
-| Nome               | Fork              |
-| ------------------ | ----------------- |
-| Marco Antonio Gava | [Clique para acessar](https://github.com/marcoantoniogava/FrontEnd-Learning-Lab) |
-| Vinícius Gabriel | [Clique para acessar](https://github.com/VinokaBRazilian/FrontEnd-Learning-Lab) |
----
+O arquivo `Frontend/estudos/javascript/documentos-de-estudo/trilhaJS.md` funciona como mapa geral da trilha.
 
-# Tecnologias abordadas
+### `Frontend/estudos/angularjs/`
 
-Atualmente:
+Reúne conteúdos sobre AngularJS, com foco em base conceitual, aplicações legadas e uso mobile com Cordova.
 
-* JavaScript
-* AngularJS
+Os estudos abordam temas como two-way data binding, templates, controllers, services, ciclo de vida, banco local e Cordova.
 
-Planejado futuramente:
+### `Frontend/estudos/react/`
 
-* React
-* TypeScript
-* Next.js
-* HTTP e integração com APIs
-* Arquitetura front-end
-* Padrões de projeto
-* Performance
-* Organização de aplicações escaláveis
+Reúne anotações e estudos iniciais sobre React, incluindo JSX, componentes, props e tipagem de props.
+
+### `Frontend/exercicios/javascript/`
+
+Contém listas de exercícios organizadas por seções da trilha JavaScript.
+
+As listas seguem um padrão com conteúdos praticados, enunciados, requisitos, dicas e exemplos quando necessário.
 
 ---
 
-# Filosofia
+## Como usar
 
-A proposta deste projeto é unir:
+Para estudar pelo DevLab:
 
-* teoria
-* prática
-* organização
-* entendimento profundo
-* resolução de problemas reais
-* evolução contínua
+1. Leia os materiais de aula em `Frontend/aulas/`.
+2. Use a trilha JavaScript como guia principal.
+3. Estude os documentos na ordem recomendada.
+4. Resolva os exercícios relacionados ao conteúdo estudado.
+5. Revise erros, registre dúvidas e pratique novamente.
+6. Avance para React, AngularJS ou outros temas conforme a base ficar mais sólida.
 
-O foco não é apenas fazer código funcionar, mas compreender como e por que ele funciona.
+Para participantes da mentoria, o fluxo inicial é fazer fork do repositório, clonar o projeto, resolver os exercícios no próprio fork e enviar as entregas no canal combinado.
 
 ---
 
-# Observação
+## Padrão dos materiais
 
-O conteúdo do repositório está em constante evolução e pode receber novas trilhas, exercícios, melhorias estruturais e aprofundamentos técnicos ao longo do tempo.
+Os conteúdos devem manter:
 
-# Extensões recomendadas:
+- linguagem simples;
+- explicações claras;
+- exemplos práticos;
+- conexão com uso real;
+- Markdown limpo;
+- organização por assunto;
+- evolução progressiva de dificuldade.
 
-- Code Runner
-- Error Lens
+Antes de criar um novo conteúdo, verifique se o assunto já existe em alguma parte da trilha.
 
-Opcional:
-- Git Graph
-- Auto Rename Tag
-- Live Server
-- Material Icon Theme
-- Markdown Preview Github Styling
+---
+
+## Extensões recomendadas
+
+Extensões úteis no VS Code:
+
+- Code Runner;
+- Error Lens;
+- Git Graph;
+- Auto Rename Tag;
+- Live Server;
+- Material Icon Theme;
+- Markdown Preview GitHub Styling.
+
+---
+
+## Status
+
+O DevLab está em evolução contínua.
+
+Novas aulas, exercícios, estudos e melhorias estruturais podem ser adicionados conforme a mentoria avançar.
+
+---
+
+## Mantido por
+
+Projeto mantido pela **YA LABS**.
+
+Idealizado e organizado por **Nícolas Machado Cardoso**.
