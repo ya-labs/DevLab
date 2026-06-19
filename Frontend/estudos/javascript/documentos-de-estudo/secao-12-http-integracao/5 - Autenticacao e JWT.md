@@ -168,6 +168,8 @@ Request -> Middleware de autenticação -> Controller -> Service -> Response
 
 Em APIs reais, essa validação geralmente fica em middlewares, filters ou mecanismos próprios do framework.
 
+---
+
 # 7 - Payload do JWT
 
 O payload pode carregar informações como:
@@ -280,3 +282,90 @@ Contra:
 
 Para estudo de front-end, é comum começar entendendo `Authorization: Bearer token`. Depois vale aprofundar cookies, sessão e credentials.
 
+---
+
+# 11 - Refresh token
+
+Em sistemas mais completos, pode existir:
+
+- access token;
+- refresh token.
+
+O ``access token`` é usado nas requisições normais e costuma durar pouco tempo (~15 minutos pelo padrão).
+O ``refresh token`` serve para pedir um novo access token sem obrigar o usuário a fazer login toda hora.
+
+Fluxo comum:
+1 - Usuário faz login.
+2 - API retorna access token e refresh token.
+3 - Front-end usa access token nas requisições.
+4 - Access token expira.
+5 - Front-end usa refresh token para pedir outro access token.
+6 - Se o refresh token também estiver inválido, o usuário faz login novamente.
+
+---
+
+# 12 - Erros comuns
+
+### Colocar dados sensíveis no JWT
+JWT pode ser decodificado. Não coloque informações sigilosas no payload.
+
+### Esquecer o Bearer
+Errado:
+```http
+Authorization: token_jwt_aqui
+```
+
+Certo:
+
+```http
+Authorization: Bearer token_jwt_aqui
+```
+
+### Tratar todo erro como login inválido
+Nem todo erro no login é senha errada.
+
+Pode existir:
+- 400: body inválido;
+- 401: credenciais inválidas;
+- 429: muitas tentativas;
+- 500: erro interno.
+
+### Achar que autenticação resolve autorização
+Login identifica o usuário. Permissão define o que ele pode fazer.
+
+---
+
+# 16 - Boas práticas
+- use HTTPS em produção;
+- não salve senha no front-end;
+- não salve dados sensíveis no JWT;
+- use expiração nos tokens;
+- trate 401 e 403 separadamente;
+- remova o token quando a sessão expirar;
+- envie JWT pelo header ``Authorization``;
+- valide permissões no back-end;
+- não confie em validações apenas no front-end;
+- use cookies ``HttpOnly`` quando o projeto exigir maior segurança;
+- proteja rotas sensíveis contra excesso de tentativas.
+
+---
+
+# 17 - Relação com outros estudos
+Antes deste conteúdo, vale revisar:
+1 - [Fetch API.md](./1%20-%20Fetch%20API.md);
+2 - [REST API.md](./2%20-%20REST%20API.md);
+3 - [Status HTTP.md](./3%20-%20Status%20HTTP.md);
+4 - [Headers HTTP.md](./4%20-%20Headers%20HTTP.md).
+
+Este estudo depende principalmente de:
+- fetch, para enviar requisições;
+- headers, para usar Authorization;
+- status HTTP, para entender 401 e 403;
+- REST API, para entender rotas protegidas e comunicação stateless.
+
+Depois deste conteúdo, faz sentido estudar:
+- CORS;
+- cookies;
+- sessão;
+- credentials;
+- interceptação de requests.
